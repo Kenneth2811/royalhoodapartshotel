@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoyalHood Aparts Hotel</title>
+    <meta name="description" content="Experience refined minimalist luxury at RoyalHood Aparts Hotel. Premium serviced apartments featuring world-class amenities, stunning views, and bespoke hospitality.">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            50: '#fcfbf9',
+                            100: '#f4f2ee',
+                            200: '#e5e1db',
+                            300: '#d1cbc1',
+                            400: '#a39b8e',
+                            500: '#7a7164',
+                            600: '#5c544a',
+                            700: '#474039',
+                            800: '#38322d',
+                            900: '#2c2724',
+                            950: '#191614',
+                        },
+                        accent: {
+                            DEFAULT: '#c5a880',
+                            light: '#dfcca9',
+                            dark: '#9e815d',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased selection:bg-accent selection:text-white">
+
+    <!-- Top Notification Bar -->
+    <div class="bg-stone-900 text-stone-300 text-xs py-2 px-4 text-center tracking-widest uppercase font-medium">
+        <span>Complimentary Wi-Fi, premium amenities, and everything you need for a comfortable stay.</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header id="site-header" class="sticky top-0 z-40 bg-stone-50/90 backdrop-blur-md border-b border-stone-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" onclick="router.navigateTo('home'); return false;" class="flex items-center gap-2 group">
+                <img src="images/logo.png" alt="RoyalHood Aparts Hotel Logo" class="w-14 h-14 object-contain">
+                <div class="flex flex-col">
+                    <span class="font-serif text-xl tracking-wider font-bold text-stone-900">RoyalHood Aparts Hotel</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+                <a href="#" onclick="router.navigateTo('home'); return false;" class="nav-link text-stone-900 hover:text-accent transition-colors" data-page="home">Home</a>
+                <a href="#" onclick="router.navigateTo('apartments'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="apartments">Apartments</a>
+                <a href="#" onclick="router.navigateTo('gallery'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="gallery">Gallery</a>
+                <a href="#" onclick="router.navigateTo('amenities'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="amenities">Amenities</a>
+                <a href="#" onclick="router.navigateTo('location'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="location">Location</a>
+                <a href="#" onclick="router.navigateTo('about'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="about">About</a>
+                <a href="#" onclick="router.navigateTo('contact'); return false;" class="nav-link text-stone-600 hover:text-accent transition-colors" data-page="contact">Contact</a>
+            </nav>
+
+            <!-- Actions / CTA -->
+            <div class="hidden md:flex items-center gap-4">
+                <button onclick="router.navigateTo('apartments')" class="bg-stone-900 text-stone-50 px-6 py-3 rounded-full text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-all shadow-sm">
+                    Book Your Stay
+                </button>
+                <button onclick="openAdminAuth()" class="w-10 h-10 rounded-full border border-stone-300 flex items-center justify-center text-stone-600 hover:border-stone-900 hover:text-stone-900 transition-colors" title="Admin Portal">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="flex items-center gap-3 md:hidden">
+                <button onclick="router.navigateTo('apartments')" class="bg-stone-900 text-stone-50 px-4 py-2 rounded-full text-xs uppercase tracking-widest font-semibold">
+                    Book
+                </button>
+                <button onclick="toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center text-stone-800">
+                    <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-stone-50 border-b border-stone-200 px-6 py-8 shadow-xl flex flex-col gap-6">
+            <a href="#" onclick="router.navigateTo('home'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Home</a>
+            <a href="#" onclick="router.navigateTo('apartments'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Apartments</a>
+            <a href="#" onclick="router.navigateTo('gallery'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Gallery</a>
+            <a href="#" onclick="router.navigateTo('amenities'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Amenities</a>
+            <a href="#" onclick="router.navigateTo('location'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Location</a>
+            <a href="#" onclick="router.navigateTo('about'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">About</a>
+            <a href="#" onclick="router.navigateTo('contact'); toggleMobileMenu(); return false;" class="text-lg font-serif font-medium text-stone-900">Contact</a>
+            <div class="pt-4 border-t border-stone-200 flex flex-col gap-3">
+                <button onclick="openAdminAuth(); toggleMobileMenu();" class="w-full py-3 border border-stone-300 rounded-lg text-xs uppercase tracking-widest font-semibold text-stone-700">
+                    <i class="fa-solid fa-lock mr-2"></i> Admin Portal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+    <main id="app-container">
+        <!-- Injected via JS Router -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                <!-- Col 1 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <img src="images/logo.png" alt="RoyalHood Aparts Hotel Logo" class="w-12 h-12 object-contain">
+                        <div class="flex flex-col items-center">
+                            <span class="font-serif text-xl tracking-wider text-white">RoyalHood Aparts Hotel</span>
+                            <p class="mt-1 text-sm text-stone-400/90 leading-7 font-light italic tracking-[0.08em] text-center">
+                                Discover the Difference.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 pt-2">
+                        <a href="#" data-social="instagram" aria-label="Instagram (link coming soon)" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center text-stone-300 hover:bg-accent hover:text-stone-900 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
+                        <a href="#" data-social="facebook" aria-label="Facebook (link coming soon)" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center text-stone-300 hover:bg-accent hover:text-stone-900 transition-colors"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+                        <a href="#" data-social="whatsapp" aria-label="WhatsApp (link coming soon)" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center text-stone-300 hover:bg-accent hover:text-stone-900 transition-colors"><i class="fa-brands fa-whatsapp text-sm"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h4 class="font-serif text-white text-base tracking-wide mb-4">Navigation</h4>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="#" onclick="router.navigateTo('apartments'); return false;" class="text-stone-400 hover:text-accent transition-colors">Our Apartments</a></li>
+                        <li><a href="#" onclick="router.navigateTo('amenities'); return false;" class="text-stone-400 hover:text-accent transition-colors">Luxury Amenities</a></li>
+                        <li><a href="#" onclick="router.navigateTo('gallery'); return false;" class="text-stone-400 hover:text-accent transition-colors">Photo Gallery</a></li>
+                        <li><a href="#" onclick="router.navigateTo('location'); return false;" class="text-stone-400 hover:text-accent transition-colors">Prime Location</a></li>
+                        <li><a href="#" onclick="router.navigateTo('about'); return false;" class="text-stone-400 hover:text-accent transition-colors">Our Philosophy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Contact Info -->
+                <div>
+                    <h4 class="font-serif text-white text-base tracking-wide mb-4">Concierge Desk</h4>
+                    <ul class="space-y-3 text-sm text-stone-400">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot text-accent mt-1"></i>
+                            <span>Tema - Community 25, Greater Accra, Ghana</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-phone text-accent"></i>
+                            <span>+233 (0) 24 464 5937</span>
+                            <span>+44 (0) 740 365 9664</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-accent"></i>
+                            <span>royalhoodhotels@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Sub-footer -->
+            <div class="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between text-xs text-stone-500 gap-4">
+                <p>&copy; 2026 RoyalHood Aparts Hotel. All rights reserved. <b> ~ Designed by MaceInk Technologies (+233 (0) 54 555 3048)</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" onclick="router.navigateTo('privacy-policy'); return false;" class="hover:text-stone-300 transition-colors">Privacy Policy</a>
+                    <a href="#" onclick="router.navigateTo('terms-of-residence'); return false;" class="hover:text-stone-300 transition-colors">Terms of Residence</a>
+                    <a href="#" onclick="openAdminAuth()" class="hover:text-stone-300 transition-colors">Admin Portal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADMIN MODAL / AUTH OVERLAY -->
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-stone-50 rounded-2xl max-w-md w-full p-8 shadow-2xl relative border border-stone-200">
+            <button onclick="closeAdminAuth()" class="absolute top-6 right-6 text-stone-400 hover:text-stone-900 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="admin-auth-content">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 bg-stone-900 text-accent rounded-full flex items-center justify-center mx-auto mb-3 font-serif text-xl font-bold">A</div>
+                    <h3 class="font-serif text-2xl font-bold text-stone-900">Admin Portal Access</h3>
+                    <p class="text-xs text-stone-500 mt-1">Enter Supabase Auth credentials to access dashboard</p>
+                </div>
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Email / Username</label>
+                        <input type="text" id="admin-user" required autocomplete="username" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Password</label>
+                        <input type="password" id="admin-pass" required autocomplete="current-password" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                    </div>
+                    <button type="submit" class="w-full bg-stone-900 text-white py-3 rounded-lg text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">Authenticate</button>
+                </form>
+                <p class="text-[11px] text-stone-400 text-center mt-4">Authenticated securely through Supabase Auth</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKING CONFIRMATION MODAL -->
+    <div id="booking-modal" class="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="booking-modal-content" class="bg-stone-50 rounded-2xl max-w-lg w-full p-8 shadow-2xl relative border border-stone-200">
+            <!-- Dynamic content injected -->
+        </div>
+    </div>
+
+    <!-- PHOTO LIGHTBOX MODAL (view all photos for an apartment) -->
+    <div id="photo-lightbox-modal" class="fixed inset-0 z-[60] bg-stone-950/95 backdrop-blur-sm hidden flex-col items-center justify-center p-4">
+        <button onclick="closePhotoLightbox()" class="absolute top-6 right-6 text-stone-300 hover:text-white text-2xl z-10" title="Close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="absolute top-6 left-6 text-stone-300 text-xs uppercase tracking-widest">
+            <span id="lightbox-counter">1 / 1</span>
+        </div>
+
+        <button onclick="lightboxPrev()" class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-lg z-10" title="Previous photo">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="lightboxNext()" class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-lg z-10" title="Next photo">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="w-full max-w-5xl h-[70vh] flex items-center justify-center px-4 sm:px-16">
+            <img id="lightbox-main-image" src="" alt="Apartment photo" class="max-w-full max-h-full object-contain rounded-lg">
+        </div>
+
+        <div id="lightbox-thumbnails" class="hide-scrollbar w-full max-w-5xl mt-6 flex gap-3 overflow-x-auto px-4 sm:px-16">
+            <!-- Thumbnails injected via JS -->
+        </div>
+    </div>
+
+    <!-- ADD APARTMENT MODAL -->
+    <div id="add-room-modal" class="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-stone-50 rounded-2xl max-w-2xl w-full p-8 shadow-2xl relative border border-stone-200 my-8 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddRoomModal()" class="absolute top-6 right-6 text-stone-400 hover:text-stone-900 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-6">
+                <h3 class="font-serif text-2xl font-bold text-stone-900">Add New Apartment</h3>
+                <p class="text-xs text-stone-500 mt-1">Configure property details, layout, amenities, and media</p>
+            </div>
+            <form id="add-room-form" onsubmit="handleAddNewRoomSubmission(event)" class="space-y-6">
+                <div id="add-room-error" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs"></div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Basic Information</h4>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Apartment Name *</label>
+                        <input type="text" id="room-name" required placeholder="e.g. The Sapphire Residence" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Price per Night ($) *</label>
+                            <input type="number" id="room-price" required min="1" step="any" placeholder="300" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Status</label>
+                            <div class="flex items-center h-11">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="room-active" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-stone-900"></div>
+                                    <span class="ml-3 text-xs font-semibold text-stone-700">Active (Visible for Booking)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Description *</label>
+                        <textarea id="room-desc" required rows="3" placeholder="Describe the apartment features, views, and ambience..." class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900"></textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Capacity & Layout</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Max Guests *</label>
+                            <input type="number" id="room-max-guests" required min="1" value="2" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Bedrooms *</label>
+                            <input type="number" id="room-bedrooms" required min="0" value="1" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Beds *</label>
+                            <input type="number" id="room-beds" required min="1" value="1" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Bathrooms *</label>
+                            <input type="number" id="room-bathrooms" required min="0.5" step="0.5" value="1" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Check-in / Check-out</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-in Time *</label>
+                            <input type="text" id="room-checkin-time" required placeholder="e.g. 3:00 PM" value="3:00 PM" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-out Time *</label>
+                            <input type="text" id="room-checkout-time" required placeholder="e.g. 11:00 AM" value="11:00 AM" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Images</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 1 (Main) *</label>
+                            <input type="file" id="room-main-image-file" accept="image/*" onchange="handleImageFileSelect(event, 'room-main-image', 'room-main-image-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="room-main-image-preview" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="room-main-image" value="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 2</label>
+                            <input type="file" id="room-photo-2-file" accept="image/*" onchange="handleImageFileSelect(event, 'room-gallery-image-2', 'room-photo-2-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="room-photo-2-preview" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="room-gallery-image-2" value="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 3</label>
+                            <input type="file" id="room-photo-3-file" accept="image/*" onchange="handleImageFileSelect(event, 'room-gallery-image-3', 'room-photo-3-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="room-photo-3-preview" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="room-gallery-image-3" value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80">
+                        </div>
+                    </div>
+                    <div id="room-extra-photos" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+                    <button type="button" onclick="addRoomPhotoSlot()" class="text-xs font-semibold text-accent-dark hover:text-stone-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus"></i> Add Another Photo
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Amenities</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="room-amenities-checkboxes">
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="High-Speed Wi-Fi" checked class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> High-Speed Wi-Fi</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Air Conditioning" checked class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Air Conditioning</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Kitchen" checked class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Kitchen</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Smart TV" checked class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Smart TV</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Parking" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Parking</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Pool" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Pool</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Laundry" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Laundry</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Balcony" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Balcony</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="amenity" value="Workspace" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Workspace</label>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-200">
+                    <button type="button" onclick="closeAddRoomModal()" class="flex-1 bg-stone-200 text-stone-800 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-stone-300 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-stone-900 text-white py-3 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors">
+                        Add Apartment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT APARTMENT MODAL -->
+    <div id="edit-room-modal" class="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-stone-50 rounded-2xl max-w-2xl w-full p-8 shadow-2xl relative border border-stone-200 my-8 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeEditRoomModal()" class="absolute top-6 right-6 text-stone-400 hover:text-stone-900 text-lg" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-6">
+                <h3 class="font-serif text-2xl font-bold text-stone-900">Edit Apartment</h3>
+                <p class="text-xs text-stone-500 mt-1">Update property details, layout, amenities, and media</p>
+            </div>
+            <form id="edit-room-form" onsubmit="handleEditRoomSubmission(event)" class="space-y-6">
+                <input type="hidden" id="edit-room-id">
+                <div id="edit-room-error" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs"></div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Basic Information</h4>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Apartment Name *</label>
+                        <input type="text" id="edit-room-name" required placeholder="e.g. The Sapphire Residence" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Price per Night ($) *</label>
+                            <input type="number" id="edit-room-price" required min="1" step="any" placeholder="300" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Status</label>
+                            <div class="flex items-center h-11">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="edit-room-active" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-stone-900"></div>
+                                    <span class="ml-3 text-xs font-semibold text-stone-700">Active (Visible for Booking)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Description *</label>
+                        <textarea id="edit-room-desc" required rows="3" placeholder="Describe the apartment features, views, and ambience..." class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900"></textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Capacity & Layout</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Max Guests *</label>
+                            <input type="number" id="edit-room-max-guests" required min="1" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Bedrooms *</label>
+                            <input type="number" id="edit-room-bedrooms" required min="0" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Beds *</label>
+                            <input type="number" id="edit-room-beds" required min="1" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Bathrooms *</label>
+                            <input type="number" id="edit-room-bathrooms" required min="0.5" step="0.5" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Check-in / Check-out</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-in Time *</label>
+                            <input type="text" id="edit-room-checkin-time" required placeholder="e.g. 3:00 PM" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-out Time *</label>
+                            <input type="text" id="edit-room-checkout-time" required placeholder="e.g. 11:00 AM" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Images</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 1 (Main) *</label>
+                            <input type="file" id="edit-room-main-image-file" accept="image/*" onchange="handleImageFileSelect(event, 'edit-room-main-image', 'edit-room-main-image-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="edit-room-main-image-preview" src="" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="edit-room-main-image">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 2</label>
+                            <input type="file" id="edit-room-photo-2-file" accept="image/*" onchange="handleImageFileSelect(event, 'edit-room-gallery-image-2', 'edit-room-photo-2-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="edit-room-photo-2-preview" src="" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="edit-room-gallery-image-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo 3</label>
+                            <input type="file" id="edit-room-photo-3-file" accept="image/*" onchange="handleImageFileSelect(event, 'edit-room-gallery-image-3', 'edit-room-photo-3-preview')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                            <img id="edit-room-photo-3-preview" src="" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                            <input type="hidden" id="edit-room-gallery-image-3">
+                        </div>
+                    </div>
+                    <div id="edit-room-extra-photos" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+                    <button type="button" onclick="addEditRoomPhotoSlot()" class="text-xs font-semibold text-accent-dark hover:text-stone-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus"></i> Add Another Photo
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-serif text-sm font-bold text-stone-900 uppercase tracking-wider border-b border-stone-200 pb-2">Amenities</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="edit-room-amenities-checkboxes">
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="High-Speed Wi-Fi" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> High-Speed Wi-Fi</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Air Conditioning" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Air Conditioning</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Kitchen" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Kitchen</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Smart TV" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Smart TV</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Parking" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Parking</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Pool" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Pool</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Laundry" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Laundry</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Balcony" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Balcony</label>
+                        <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer"><input type="checkbox" name="edit-amenity" value="Workspace" class="rounded border-stone-300 text-stone-900 focus:ring-stone-900"> Workspace</label>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-200">
+                    <button type="button" onclick="closeEditRoomModal()" class="flex-1 bg-stone-200 text-stone-800 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-stone-300 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-stone-900 text-white py-3 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT ARCHITECTURE & SUPABASE-READY DATA SERVICE LAYER -->
+    <script>
+        /* ==========================================================================
+           1. SUPABASE CONFIGURATION & DATA ACCESS LAYER
+           ================================================================---------- */
+        
+        const SUPABASE_CONFIG = {
+            url: 'https://nxvbrbmklhblqkwbpisf.supabase.co',
+            anonKey: 'sb_publishable_ehSyMY07KUNzuN1o5DPXXw_F-YiHZUL',
+            tables: {
+                settings: 'royalhood_settings',
+                rooms: 'royalhood_rooms',
+                bookings: 'royalhood_bookings',
+                messages: 'royalhood_messages'
+            }
+        };
+
+        const WEB3FORMS_ACCESS_KEY = '2f7ec5f9-ed91-4937-ac76-37f106e6774c';
+
+        let supabaseClient = null;
+        let currentSession = null;
+
+        if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL' && SUPABASE_CONFIG.anonKey && window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        }
+
+        const DEFAULT_SETTINGS = {
+            propertyName: "RoyalHood Aparts Hotel",
+            address: "Tema - Community 25, Greater Accra, Ghana",
+            phone: "+233 (0) 24 464 5937 +44 740 365 9664",
+            email: "royalhoodhotels@gmail.com",
+            checkInTime: "3:00 PM",
+            checkOutTime: "11:00 AM",
+            currency: "USD",
+            currencySymbol: "$"
+        };
+
+        const DEFAULT_ROOMS = [];
+        const DEFAULT_BOOKINGS = [];
+
+        const DB = {
+            _realtimeChannel: null,
+
+            async init() {
+                // Always try the live backend first, so the very first render reflects
+                // the admin's actual current data rather than a locally cached copy.
+                if (supabaseClient) {
+                    try {
+                        const { data: { session } } = await supabaseClient.auth.getSession();
+                        currentSession = session;
+                        supabaseClient.auth.onAuthStateChange((event, session) => {
+                            currentSession = session;
+                        });
+
+                        const [settingsRes, roomsRes, bookingsRes] = await Promise.all([
+                            supabaseClient.from(SUPABASE_CONFIG.tables.settings).select('*'),
+                            supabaseClient.from(SUPABASE_CONFIG.tables.rooms).select('*'),
+                            supabaseClient.from(SUPABASE_CONFIG.tables.bookings).select('*')
+                        ]);
+
+                        localStorage.setItem('royalhood_settings', JSON.stringify(
+                            (settingsRes.data && settingsRes.data.length > 0) ? settingsRes.data[0] : DEFAULT_SETTINGS
+                        ));
+                        localStorage.setItem('royalhood_rooms', JSON.stringify(roomsRes.data || DEFAULT_ROOMS));
+                        localStorage.setItem('royalhood_bookings', JSON.stringify(bookingsRes.data || DEFAULT_BOOKINGS));
+
+                        this._subscribeToRealtimeUpdates();
+                        return;
+                    } catch (err) {
+                        console.warn("Supabase sync warning: Operating on local storage cache.", err);
+                    }
+                }
+
+                // Genuine fallback only: no backend connection available (offline, config
+                // missing, or the request above failed). Use whatever was cached from the
+                // last successful sync, seeding empty defaults if nothing is cached yet.
+                if (!localStorage.getItem('royalhood_settings')) {
+                    localStorage.setItem('royalhood_settings', JSON.stringify(DEFAULT_SETTINGS));
+                }
+                if (!localStorage.getItem('royalhood_rooms')) {
+                    localStorage.setItem('royalhood_rooms', JSON.stringify(DEFAULT_ROOMS));
+                }
+                if (!localStorage.getItem('royalhood_bookings')) {
+                    localStorage.setItem('royalhood_bookings', JSON.stringify(DEFAULT_BOOKINGS));
+                }
+            },
+
+            // Keep every open tab/browser in sync with admin changes in real time, so
+            // newly created or edited apartments show up without a manual page refresh.
+            _subscribeToRealtimeUpdates() {
+                if (!supabaseClient || this._realtimeChannel) return;
+
+                this._realtimeChannel = supabaseClient
+                    .channel('royalhood_rooms_sync')
+                    .on('postgres_changes',
+                        { event: '*', schema: 'public', table: SUPABASE_CONFIG.tables.rooms },
+                        async () => {
+                            const { data, error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).select('*');
+                            if (!error) {
+                                localStorage.setItem('royalhood_rooms', JSON.stringify(data || DEFAULT_ROOMS));
+                                router.render();
+                            }
+                        }
+                    )
+                    .subscribe();
+            },
+
+            getSettings() {
+                return JSON.parse(localStorage.getItem('royalhood_settings'));
+            },
+            async saveSettings(s) {
+                localStorage.setItem('royalhood_settings', JSON.stringify(s));
+                if (supabaseClient) {
+                    try {
+                        const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.settings).upsert(s);
+                        if (error) console.error("Supabase Error [saveSettings]:", error.message, error);
+                    } catch (err) {
+                        console.error("Unexpected error in saveSettings:", err);
+                    }
+                }
+            },
+
+            getRooms() {
+                return JSON.parse(localStorage.getItem('royalhood_rooms')) || [];
+            },
+            async saveRooms(rooms) {
+                localStorage.setItem('royalhood_rooms', JSON.stringify(rooms));
+                if (supabaseClient) {
+                    try {
+                        for (let room of rooms) {
+                            const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).upsert(room);
+                            if (error) console.error("Supabase Error [saveRooms]:", error.message, error);
+                        }
+                    } catch (err) {
+                        console.error("Unexpected error in saveRooms:", err);
+                    }
+                }
+            },
+            async deleteRoomFromDb(roomId) {
+                let rooms = this.getRooms().filter(r => r.id !== roomId);
+                localStorage.setItem('royalhood_rooms', JSON.stringify(rooms));
+                if (supabaseClient) {
+                    try {
+                        const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).delete().eq('id', roomId);
+                        if (error) console.error("Supabase Error [deleteRoom]:", error.message, error);
+                    } catch (err) {
+                        console.error("Unexpected error in deleteRoomFromDb:", err);
+                    }
+                }
+            },
+
+            getBookings() {
+                return JSON.parse(localStorage.getItem('royalhood_bookings')) || [];
+            },
+            async saveBookings(bookings) {
+                localStorage.setItem('royalhood_bookings', JSON.stringify(bookings));
+                if (supabaseClient) {
+                    try {
+                        for (let booking of bookings) {
+                            const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.bookings).upsert(booking, { onConflict: 'bookingId' });
+                            if (error) console.error("Supabase Error [saveBookings]:", error.message, error);
+                        }
+                    } catch (err) {
+                        console.error("Unexpected error in saveBookings:", err);
+                    }
+                }
+            },
+            
+            checkAvailability(roomId, checkIn, checkOut, excludeBookingId = null) {
+                const bookings = this.getBookings();
+                const inDate = new Date(checkIn);
+                const outDate = new Date(checkOut);
+                
+                if (inDate >= outDate) return { available: false, message: "Check-out date must be after check-in date." };
+
+                for (let b of bookings) {
+                    if (b.roomId === roomId && b.bookingStatus !== 'Cancelled') {
+                        if (excludeBookingId && b.bookingId === excludeBookingId) continue;
+                        const bIn = new Date(b.checkIn);
+                        const bOut = new Date(b.checkOut);
+                        
+                        if (inDate < bOut && outDate > bIn) {
+                            return { available: false, message: `Dates conflict with an existing reservation (${b.checkIn} to ${b.checkOut}).` };
+                        }
+                    }
+                }
+                return { available: true };
+            }
+        };
+
+        /* ==========================================================================
+           2. CLIENT-SIDE ROUTER & HISTORY API NAVIGATION ENGINE
+           ================================================================---------- */
+        const router = {
+            currentPage: 'home',
+            currentParam: null,
+
+            navigateTo(page, param = null, pushHistory = true) {
+                this.currentPage = page;
+                this.currentParam = param;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                this.render();
+                this.updateNavLinks();
+
+                if (pushHistory) {
+                    const stateObj = { page: page, param: param };
+                    const url = param ? `#${page}/${param}` : `#${page}`;
+                    history.pushState(stateObj, '', url);
+                }
+            },
+
+            updateNavLinks() {
+                document.querySelectorAll('.nav-link').forEach(el => {
+                    if (el.dataset.page === this.currentPage) {
+                        el.classList.add('text-accent', 'font-semibold');
+                        el.classList.remove('text-stone-600');
+                    } else {
+                        el.classList.remove('text-accent', 'font-semibold');
+                        el.classList.add('text-stone-600');
+                    }
+                });
+            },
+
+            render() {
+                const container = document.getElementById('app-container');
+                switch (this.currentPage) {
+                    case 'home':
+                        container.innerHTML = renderHomePage();
+                        break;
+                    case 'apartments':
+                        container.innerHTML = renderApartmentsPage();
+                        break;
+                    case 'room-detail':
+                        container.innerHTML = renderRoomDetailPage(this.currentParam);
+                        break;
+                    case 'gallery':
+                        container.innerHTML = renderGalleryPage();
+                        break;
+                    case 'amenities':
+                        container.innerHTML = renderAmenitiesPage();
+                        break;
+                    case 'location':
+                        container.innerHTML = renderLocationPage();
+                        break;
+                    case 'about':
+                        container.innerHTML = renderAboutPage();
+                        break;
+                    case 'contact':
+                        container.innerHTML = renderContactPage();
+                        break;
+                    case 'privacy-policy':
+                        container.innerHTML = renderPrivacyPolicyPage();
+                        break;
+                    case 'terms-of-residence':
+                        container.innerHTML = renderTermsOfResidencePage();
+                        break;
+                    case 'admin':
+                        if (supabaseClient && !currentSession) {
+                            alert('Authentication required to access the admin dashboard.');
+                            router.navigateTo('home');
+                            openAdminAuth();
+                            return;
+                        }
+                        container.innerHTML = renderAdminDashboard();
+                        break;
+                    default:
+                        container.innerHTML = renderHomePage();
+                }
+            }
+        };
+
+        // Listen to browser Back/Forward navigation buttons
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page) {
+                router.navigateTo(event.state.page, event.state.param, false);
+            } else {
+                // Fallback parsing from hash if state is empty
+                const hash = window.location.hash.replace('#', '');
+                if (hash) {
+                    const parts = hash.split('/');
+                    router.navigateTo(parts[0], parts[1] || null, false);
+                } else {
+                    router.navigateTo('home', null, false);
+                }
+            }
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            menu.classList.toggle('hidden');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-xmark');
+        }
+
+        /* ==========================================================================
+           3. PAGE VIEWS GENERATORS
+           ================================================================---------- */
+
+        function renderHomePage() {
+            const rooms = DB.getRooms().filter(r => r.active).slice(0, 3);
+            return `
+                <!-- Hero Section -->
+                <section class="relative min-h-[85vh] flex items-center justify-center bg-stone-900 overflow-hidden">
+                    <div class="absolute inset-0 z-0">
+                        <img src="images/home.png" alt="RoyalHood Luxury" class="w-full h-full object-cover opacity-40 scale-105 animate-pulse duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-900/40 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center py-20 space-y-6">
+                        <span class="inline-block text-accent uppercase tracking-[0.3em] text-xs font-semibold bg-stone-900/80 px-4 py-1.5 rounded-full border border-stone-800 backdrop-blur">
+                            Tema, Greater Accra
+                        </span>
+                        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl text-white font-normal tracking-tight leading-tight">
+                            Refined Minimalist <br><span class="italic font-light text-accent">Luxury Living</span>
+                        </h1>
+                        <p class="text-stone-300 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                           Experience refined comfort, modern elegance, and breathtaking city views in one of Ghana’s most exclusive private residences.</p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                            <button onclick="router.navigateTo('apartments')" class="w-full sm:w-auto bg-accent text-stone-950 px-8 py-4 rounded-full text-xs uppercase tracking-widest font-bold hover:bg-accent-light transition-all shadow-xl">
+                                Book Your Stay
+                            </button>
+                            <button onclick="router.navigateTo('apartments')" class="w-full sm:w-auto border border-stone-400 text-white px-8 py-4 rounded-full text-xs uppercase tracking-widest font-medium hover:bg-white hover:text-stone-900 transition-all">
+                                Explore Rooms
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Booking Widget Bar -->
+                <section class="max-w-6xl mx-auto px-4 -mt-12 relative z-20 mb-20">
+                    <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 shadow-2xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Check-in Date</label>
+                            <input type="date" id="quick-checkin" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900" value="2026-09-01">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Check-out Date</label>
+                            <input type="date" id="quick-checkout" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900" value="2026-09-06">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Guests</label>
+                            <select id="quick-guests" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                                <option value="1">1 Guest</option>
+                                <option value="2" selected>2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4+ Guests</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end h-full pt-5 md:pt-0">
+                            <button onclick="quickSearch()" class="w-full bg-stone-900 text-stone-50 py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors">
+                                Check Availability
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Featured Apartments -->
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                        <div>
+                            <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Curated Residences</span>
+                            <h2 class="font-serif text-3xl sm:text-4xl text-stone-900">Featured Suites & Apartments</h2>
+                        </div>
+                        <button onclick="router.navigateTo('apartments')" class="mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest text-stone-900 hover:text-accent flex items-center gap-2 group">
+                            View All Residences <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    ${rooms.length === 0 ? `
+                        <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center space-y-4 shadow-sm">
+                            <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold text-stone-900">No Apartments Available</h3>
+                            <p class="text-stone-500 text-sm max-w-md mx-auto">There are currently no active apartments listed. Administrators can add new properties via the Admin Portal.</p>
+                            <button onclick="openAdminAuth()" class="inline-block bg-stone-900 text-white px-6 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
+                                Open Admin Portal
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            ${rooms.map(r => `
+                                <div class="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+                                    <div class="relative h-72 overflow-hidden bg-stone-200">
+                                        <img src="${r.mainImage}" alt="${r.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <div class="absolute top-4 left-4 bg-stone-900/80 backdrop-blur text-stone-200 text-xs px-3 py-1.5 rounded-full font-medium">
+                                            Max ${r.maxGuests} Guests
+                                        </div>
+                                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur text-stone-900 text-sm px-3.5 py-1.5 rounded-full font-bold shadow">
+                                            $${r.pricePerNight} <span class="text-xs font-normal text-stone-500">/ night</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-6 flex flex-col flex-grow">
+                                        <h3 class="font-serif text-xl font-bold text-stone-900 mb-2">${r.name}</h3>
+                                        <p class="text-stone-600 text-sm line-clamp-2 mb-6 font-light">${r.description}</p>
+                                        <div class="flex items-center gap-4 text-xs text-stone-500 mb-6 pb-6 border-b border-stone-100">
+                                            <span><i class="fa-solid fa-bed mr-1 text-accent"></i> ${r.beds} Beds</span>
+                                            <span><i class="fa-solid fa-bath mr-1 text-accent"></i> ${r.bathrooms} Baths</span>
+                                            <span><i class="fa-solid fa-user-group mr-1 text-accent"></i> ${r.maxGuests} Guests</span>
+                                        </div>
+                                        <div class="flex items-center gap-3 mt-auto">
+                                            <button onclick="router.navigateTo('room-detail', '${r.id}')" class="flex-1 bg-stone-100 text-stone-900 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-stone-900 hover:text-white transition-colors">
+                                                View Details
+                                            </button>
+                                            <button onclick="router.navigateTo('room-detail', '${r.id}')" class="flex-1 bg-stone-900 text-stone-50 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
+                                                Book Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </section>
+
+                <!-- Why Choose Us -->
+                <section class="bg-stone-100 py-24 my-16 border-y border-stone-200">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center max-w-2xl mx-auto mb-16">
+                            <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">The Royal Standard</span>
+                            <h2 class="font-serif text-3xl sm:text-4xl text-stone-900">Designed for Unrivaled Comfort</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                            <div class="bg-white p-8 rounded-2xl border border-stone-200 space-y-4 shadow-sm">
+                                <div class="w-12 h-12 rounded-xl bg-accent/20 text-stone-900 flex items-center justify-center text-xl">
+                                    <i class="fa-solid fa-concierge-bell"></i>
+                                </div>
+                                <h3 class="font-serif text-xl font-bold text-stone-900">24/7 Dedicated Concierge</h3>
+                                <p class="text-stone-600 text-sm font-light leading-relaxed">From dining arrangements to airport transfers, our dedicated concierge team is available to assist with your needs.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-2xl border border-stone-200 space-y-4 shadow-sm">
+                                <div class="w-12 h-12 rounded-xl bg-accent/20 text-stone-900 flex items-center justify-center text-xl">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h3 class="font-serif text-xl font-bold text-stone-900">Absolute Privacy & Security</h3>
+                                <p class="text-stone-600 text-sm font-light leading-relaxed">Enjoy the comfort of a secure, beautifully maintained residence with 24-hour security and private parking.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-2xl border border-stone-200 space-y-4 shadow-sm">
+                                <div class="w-12 h-12 rounded-xl bg-accent/20 text-stone-900 flex items-center justify-center text-xl">
+                                    <i class="fa-solid fa-wifi"></i>
+                                </div>
+                                <h3 class="font-serif text-xl font-bold text-stone-900">High-Speed Internet</h3>
+                                <p class="text-stone-600 text-sm font-light leading-relaxed">Uncapped, dedicated redundant high speed internet connection ensuring seamless work and video streaming.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderApartmentsPage() {
+            const rooms = DB.getRooms().filter(r => r.active);
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Accommodations</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Our Luxury Residences</h1>
+                    <p class="text-stone-400 text-sm max-w-xl mx-auto font-light">Each apartment is meticulously designed to offer privacy, elegance, and modern functionality.</p>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    ${rooms.length === 0 ? `
+                        <div class="bg-white rounded-2xl border border-stone-200 p-16 text-center space-y-4 shadow-sm max-w-lg mx-auto">
+                            <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                                <i class="fa-solid fa-door-open"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl font-bold text-stone-900">No Apartments Listed</h3>
+                            <p class="text-stone-500 text-sm">There are currently no apartments available for booking. Please check back later or log in as an administrator to add new units.</p>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                            ${rooms.map(r => `
+                                <div class="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+                                    <div class="relative h-56 overflow-hidden bg-stone-200">
+                                        <img src="${r.mainImage}" alt="${r.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <div class="absolute top-3 left-3 bg-stone-900/80 backdrop-blur text-stone-200 text-[10px] px-2.5 py-1 rounded-full font-medium">
+                                            Max ${r.maxGuests} Guests
+                                        </div>
+                                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur text-stone-900 text-xs px-3 py-1 rounded-full font-bold shadow">
+                                            $${r.pricePerNight} <span class="text-[10px] font-normal text-stone-500">/ night</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-5 flex flex-col flex-grow">
+                                        <h3 class="font-serif text-lg font-bold text-stone-900 mb-2">${r.name}</h3>
+                                        <p class="text-stone-600 text-sm line-clamp-2 mb-4 font-light">${r.description}</p>
+                                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-stone-500 mb-4 pb-4 border-b border-stone-100">
+                                            <span><i class="fa-solid fa-bed mr-1 text-accent"></i> ${r.beds} Beds</span>
+                                            <span><i class="fa-solid fa-bath mr-1 text-accent"></i> ${r.bathrooms} Baths</span>
+                                            <span><i class="fa-solid fa-user-group mr-1 text-accent"></i> ${r.maxGuests} Guests</span>
+                                        </div>
+                                        <div class="flex flex-wrap gap-1.5 mb-5">
+                                            ${r.amenities.slice(0, 3).map(a => `<span class="bg-stone-100 text-stone-700 text-[10px] px-2 py-1 rounded-md font-medium">${a}</span>`).join('')}
+                                        </div>
+                                        <div class="flex flex-col gap-2 mt-auto">
+                                            <button onclick="router.navigateTo('room-detail', '${r.id}')" class="w-full bg-stone-100 text-stone-900 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-semibold hover:bg-stone-900 hover:text-white transition-colors">
+                                                View Details
+                                            </button>
+                                            <button onclick="router.navigateTo('room-detail', '${r.id}')" class="w-full bg-stone-900 text-stone-50 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
+                                                Book Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderRoomDetailPage(roomId) {
+            const rooms = DB.getRooms();
+            const room = rooms.find(r => r.id === roomId) || rooms[0];
+            const settings = DB.getSettings() || DEFAULT_SETTINGS;
+
+            if (!room) {
+                return `
+                    <div class="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
+                        <h2 class="font-serif text-3xl font-bold text-stone-900">Apartment Not Found</h2>
+                        <p class="text-stone-600 text-sm">The selected apartment may have been removed or is no longer available.</p>
+                        <button onclick="router.navigateTo('apartments')" class="bg-stone-900 text-white px-6 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
+                            View All Residences
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <div class="flex items-center gap-2 text-xs text-stone-500 mb-6">
+                        <a href="#" onclick="router.navigateTo('home'); return false;" class="hover:text-stone-900">Home</a>
+                        <span>/</span>
+                        <a href="#" onclick="router.navigateTo('apartments'); return false;" class="hover:text-stone-900">Apartments</a>
+                        <span>/</span>
+                        <span class="text-stone-900 font-medium">${room.name}</span>
+                    </div>
+
+                    <div class="mb-8">
+                        <h1 class="font-serif text-3xl sm:text-4xl text-stone-900 mb-2">${room.name}</h1>
+                        <div class="flex flex-wrap items-center gap-6 text-sm text-stone-600">
+                            <span><i class="fa-solid fa-location-dot text-accent mr-1"></i> Tema, Greater Accra</span>
+                            <span><i class="fa-solid fa-user-group text-accent mr-1"></i> Up to ${room.maxGuests} Guests</span>
+                            <span><i class="fa-solid fa-bed text-accent mr-1"></i> ${room.bedrooms} Bedroom (${room.beds} Beds)</span>
+                            <span><i class="fa-solid fa-bath text-accent mr-1"></i> ${room.bathrooms} Bathrooms</span>
+                        </div>
+                    </div>
+
+                    ${(() => {
+                        // Build the full, de-duplicated photo set for this apartment (main image + gallery).
+                        const allPhotos = [room.mainImage, ...(room.galleryImages || [])].filter((img, i, arr) => img && arr.indexOf(img) === i);
+                        window.__roomPhotoSets = window.__roomPhotoSets || {};
+                        window.__roomPhotoSets[room.id] = allPhotos;
+                        const sideThumbs = allPhotos.slice(1, 3);
+                        const remainingCount = allPhotos.length - 3;
+                        return `
+                    <div class="relative grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 h-[450px]">
+                        <div class="md:col-span-2 rounded-2xl overflow-hidden bg-stone-200 cursor-pointer" onclick="openPhotoLightbox('${room.id}', 0)">
+                            <img src="${room.mainImage}" alt="${room.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="hidden md:flex flex-col gap-4">
+                            ${sideThumbs.map((img, i) => `
+                                <div class="relative h-[215px] rounded-2xl overflow-hidden bg-stone-200 cursor-pointer" onclick="openPhotoLightbox('${room.id}', ${i + 1})">
+                                    <img src="${img}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                                    ${(i === sideThumbs.length - 1 && remainingCount > 0) ? `
+                                        <div class="absolute inset-0 bg-stone-950/60 flex items-center justify-center text-white font-semibold text-sm">
+                                            +${remainingCount} more
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="openPhotoLightbox('${room.id}', 0)" class="absolute bottom-4 right-4 bg-white/95 hover:bg-white text-stone-900 text-xs font-semibold uppercase tracking-widest px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-images text-accent"></i> View All Photos (${allPhotos.length})
+                        </button>
+                    </div>
+                        `;
+                    })()}
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        <div class="lg:col-span-2 space-y-10">
+                            <div>
+                                <h3 class="font-serif text-2xl font-bold text-stone-900 mb-4">About This Residence</h3>
+                                <p class="text-stone-600 font-light leading-relaxed text-base">${room.description}</p>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-2xl font-bold text-stone-900 mb-6">Apartment Amenities</h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    ${room.amenities.map(a => `
+                                        <div class="flex items-center gap-3 bg-stone-100 p-4 rounded-xl border border-stone-200/60 text-sm text-stone-700">
+                                            <i class="fa-solid fa-check text-accent"></i>
+                                            <span>${a}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-xl sticky top-28 space-y-6">
+                                <div class="flex items-baseline justify-between pb-6 border-b border-stone-100">
+                                    <div>
+                                        <span class="font-serif text-3xl font-bold text-stone-900">$${room.pricePerNight}</span>
+                                        <span class="text-stone-500 text-sm"> / night</span>
+                                    </div>
+                                    <div class="text-xs bg-accent/15 text-stone-900 px-3 py-1 rounded-full font-semibold">Available</div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-[11px] text-stone-500 -mt-2 pb-2">
+                                    <span><i class="fa-solid fa-right-to-bracket mr-1 text-accent"></i>Check-in: <strong class="text-stone-700">${room.checkInTime || settings.checkInTime}</strong></span>
+                                    <span><i class="fa-solid fa-right-from-bracket mr-1 text-accent"></i>Check-out: <strong class="text-stone-700">${room.checkOutTime || settings.checkOutTime}</strong></span>
+                                </div>
+
+                                <form onsubmit="handleBookingSubmission(event, '${room.id}', '${room.name}', ${room.pricePerNight})" class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-in</label>
+                                            <input type="date" id="book-checkin" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" value="2026-09-01" onchange="calculateBookingTotal(${room.pricePerNight})">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-out</label>
+                                            <input type="date" id="book-checkout" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" value="2026-09-06" onchange="calculateBookingTotal(${room.pricePerNight})">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Guests</label>
+                                        <select id="book-guests" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                            ${Array.from({length: room.maxGuests}, (_, i) => `<option value="${i+1}">${i+1} Guest${i > 0 ? 's' : ''}</option>`).join('')}
+                                        </select>
+                                    </div>
+
+                                    <div class="pt-4 border-t border-stone-100 space-y-3">
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Full Name</label>
+                                            <input type="text" id="book-name" required placeholder="e.g. Alexander Wright" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Email Address</label>
+                                            <input type="email" id="book-email" required placeholder="alexander@example.com" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Phone Number</label>
+                                            <input type="tel" id="book-phone" required placeholder="+233..." class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Special Requests</label>
+                                            <textarea id="book-requests" rows="2" placeholder="Early check-in..." class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div id="price-calculation-box" class="bg-stone-100 p-4 rounded-xl space-y-2 text-xs text-stone-600">
+                                        <div class="flex justify-between">
+                                            <span id="nights-calc-label">5 nights × $${room.pricePerNight}</span>
+                                            <span id="subtotal-calc-val" class="font-semibold text-stone-900">$${(5 * room.pricePerNight).toLocaleString()}</span>
+                                        </div>
+                                        <div class="flex justify-between border-t border-stone-200 pt-2 font-bold text-stone-900 text-sm">
+                                            <span>Total Amount</span>
+                                            <span id="total-calc-val">$${(5 * room.pricePerNight).toLocaleString()}</span>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="w-full bg-stone-900 text-stone-50 py-4 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors shadow-lg">
+                                        Request Reservation
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGalleryPage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Visual Portfolio</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Property Gallery</h1>
+                    <p class="text-stone-400 text-sm max-w-xl mx-auto font-light">Explore the architecture, interior design, and lush surroundings of RoyalHood Aparts Hotel.</p>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal1.png" class="w-full h-full object-cover"></div>
+                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal4.png" class="w-full h-full object-cover"></div>
+                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal2.png" class="w-full h-full object-cover"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAmenitiesPage() {
+            const amenities = [
+                { icon: "fa-wifi", title: "High-Speed Internet", desc: "Dedicated high-speed internet across all apartments." },
+                { icon: "fa-snowflake", title: "Climate Control", desc: "Quiet, energy-efficient air conditioning in every room." },
+                { icon: "fa-car", title: "Secure Parking", desc: "Secure private parking within the gated property with 24-hour security." },
+                { icon: "fa-kitchen-set", title: "Modern Kitchen", desc: "Fully equipped modern kitchens with quality appliances." },
+                { icon: "fa-tv", title: "Ultra-HD Entertainment", desc: "Popular streaming services and international channels." },
+                { icon: "fa-bolt", title: "Power Backup", desc: "Automatic industrial generator ensuring uninterrupted power supply." },
+                { icon: "fa-couch", title: "Guest Lounge", desc: "A comfortable shared lounge where guests can relax and unwind." },
+                { icon: "fa-mug-hot", title: "Breakfast Service", desc: "Enjoy a convenient breakfast service during your stay." },
+                { icon: "fa-shield-halved", title: "24-Hour Security", desc: "Professional security measures throughout the property." },
+                { icon: "fa-bell-concierge", title: "Concierge Service", desc: "Assistance with guest requests and selected arrangements." },
+                { icon: "fa-paw", title: "Pet friendly", desc: "A welcoming environment where guests can enjoy their stay with their pets." },
+                { icon: "fa-person-walking-luggage", title: "Guest Assistance", desc: "Helpful support for a comfortable and convenient stay." }
+            ];
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">World-Class Facilities</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Luxury Amenities</h1>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        ${amenities.map(a => `
+                            <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                                <div class="w-12 h-12 rounded-xl bg-accent/20 text-stone-900 flex items-center justify-center text-xl">
+                                    <i class="fa-solid ${a.icon}"></i>
+                                </div>
+                                <h3 class="font-serif text-xl font-bold text-stone-900">${a.title}</h3>
+                                <p class="text-stone-600 text-sm font-light leading-relaxed">${a.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* Local Area data — edit distances/descriptions or add an "image" URL
+           (e.g. https://images.unsplash.com/...) to any place to show a real
+           photo instead of the icon tile. */
+        const LOCAL_AREA_CATEGORIES = [
+            {
+                key: 'shopping', emoji: '\u{1F6CD}\uFE0F', title: 'Shopping',
+                places: [
+                    { name: 'Accra Mall', icon: 'fa-bag-shopping', desc: "Ghana's flagship shopping mall, with international retailers, a cinema, and plenty of dining options.", distance: '~35 min drive' },
+                    { name: 'A&C Mall', icon: 'fa-store', desc: 'Upscale East Legon mall known for boutique fashion, homeware, and specialty stores.', distance: '~40 min drive' },
+                    { name: 'Supermarkets', icon: 'fa-cart-shopping', desc: 'Melcom, Palace and other well-stocked supermarkets for groceries and everyday essentials.', distance: '5-10 min drive' },
+                    { name: 'Local Shops', icon: 'fa-shop', desc: 'Convenience stores and provision shops just steps from the property.', distance: '2-5 min walk' }
+                ]
+            },
+            {
+                key: 'food', emoji: '\u{1F37D}\uFE0F', title: 'Food & Dining',
+                places: [
+                    { name: 'Restaurants', icon: 'fa-utensils', desc: 'A good selection of sit-down restaurants serving continental and international dishes.', distance: '5-15 min drive' },
+                    { name: 'Caf\u00e9s', icon: 'fa-mug-saucer', desc: 'Relaxed caf\u00e9s for coffee, pastries, and light bites.', distance: '5-10 min drive' },
+                    { name: 'Fast Food', icon: 'fa-burger', desc: 'Popular fast-food chains for a quick and convenient meal.', distance: '~10 min drive' },
+                    { name: 'Local Ghanaian Food', icon: 'fa-bowl-food', desc: 'Authentic local eateries serving waakye, jollof, banku, and other Ghanaian favourites.', distance: '2-5 min walk' }
+                ]
+            },
+            {
+                key: 'essential', emoji: '\u{1F3E5}', title: 'Essential Services',
+                places: [
+                    { name: 'Hospitals', icon: 'fa-hospital', desc: 'Reputable hospitals and clinics nearby for medical care when you need it.', distance: '10-15 min drive' },
+                    { name: 'Pharmacies', icon: 'fa-prescription-bottle-medical', desc: 'Well-stocked pharmacies for medication and health essentials.', distance: '~5 min drive' },
+                    { name: 'Banks', icon: 'fa-building-columns', desc: 'Major Ghanaian banks with full-service branches close by.', distance: '~10 min drive' },
+                    { name: 'ATMs', icon: 'fa-money-bill-wave', desc: 'Multiple ATMs within easy reach for cash withdrawals.', distance: '2-5 min walk' }
+                ]
+            },
+            {
+                key: 'things', emoji: '\u{1F3AF}', title: 'Things to Do',
+                places: [
+                    { name: 'Beaches', icon: 'fa-umbrella-beach', desc: 'Prampram Beach offers a relaxing seaside escape with golden sand and beach bars.', distance: '~15 min drive' },
+                    { name: 'Parks', icon: 'fa-tree', desc: 'Green spaces nearby for a walk or some fresh air.', distance: '15-20 min drive' },
+                    { name: 'Tourist Attractions', icon: 'fa-camera-retro', desc: 'Historic sites and cultural landmarks within reach of the property.', distance: 'Varies' },
+                    { name: 'Entertainment', icon: 'fa-champagne-glasses', desc: 'Cinemas, lounges, and nightlife spots for evening entertainment.', distance: '10-20 min drive' }
+                ]
+            },
+            {
+                key: 'transport', emoji: '\u2708\uFE0F', title: 'Getting Around',
+                places: [
+                    { name: 'Kotoka International Airport', icon: 'fa-plane', desc: "Ghana's main international airport, easily reached by road.", distance: '~40-50 min drive' },
+                    { name: 'Major Roads', icon: 'fa-road', desc: 'Convenient access to the Tema Motorway and Beach Road for travel across the city.', distance: 'On-site access' },
+                    { name: 'Taxi / Rideshare', icon: 'fa-taxi', desc: 'Uber and Bolt operate widely in the area for easy, on-demand transport.', distance: 'Available on request' },
+                    { name: 'Approximate Travel Times', icon: 'fa-clock', desc: 'Most everyday needs are within a 5-20 minute drive, with the airport and central Accra roughly 30-50 minutes away.', distance: 'Summary' }
+                ]
+            }
+        ];
+
+        function renderLocalAreaSection() {
+            const tabs = LOCAL_AREA_CATEGORIES.map((cat, i) => `
+                <button onclick="switchLocalAreaTab('${cat.key}')" id="local-tab-${cat.key}" class="local-area-tab shrink-0 px-5 py-2.5 rounded-full text-sm font-medium tracking-wide border transition-all ${i === 0 ? 'bg-stone-900 text-white border-stone-900' : 'bg-white text-stone-600 border-stone-300 hover:border-stone-900'}">
+                    <span class="mr-1.5">${cat.emoji}</span>${cat.title}
+                </button>
+            `).join('');
+
+            const panels = LOCAL_AREA_CATEGORIES.map((cat, i) => `
+                <div id="local-panel-${cat.key}" class="local-area-panel ${i === 0 ? '' : 'hidden'} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    ${cat.places.map(p => `
+                        <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden group hover:shadow-lg transition-shadow">
+                            <div class="h-36 bg-gradient-to-br from-stone-800 via-stone-900 to-black relative flex items-center justify-center overflow-hidden">
+                                ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">` : `<i class="fa-solid ${p.icon} text-4xl text-accent/80 group-hover:scale-110 transition-transform"></i>`}
+                                <span class="absolute top-3 right-3 bg-white/95 text-stone-900 text-[10px] font-semibold px-2.5 py-1 rounded-full tracking-wide shadow">
+                                    <i class="fa-solid fa-location-arrow text-accent mr-1"></i>${p.distance}
+                                </span>
+                            </div>
+                            <div class="p-5 space-y-2">
+                                <h4 class="font-serif text-base font-bold text-stone-900">${p.name}</h4>
+                                <p class="text-stone-500 text-xs font-light leading-relaxed">${p.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            return `
+                <div class="bg-stone-100 border-t border-stone-200 py-16">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="text-center mb-10">
+                            <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Local Area</span>
+                            <h2 class="font-serif text-3xl sm:text-4xl font-normal text-stone-900">Discover What's Around Royalhood</h2>
+                        </div>
+                        <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2 mb-10 justify-start lg:justify-center">
+                            ${tabs}
+                        </div>
+                        ${panels}
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchLocalAreaTab(key) {
+            document.querySelectorAll('.local-area-panel').forEach(p => p.classList.add('hidden'));
+            const activePanel = document.getElementById(`local-panel-${key}`);
+            if (activePanel) activePanel.classList.remove('hidden');
+
+            document.querySelectorAll('.local-area-tab').forEach(t => {
+                t.classList.remove('bg-stone-900', 'text-white', 'border-stone-900');
+                t.classList.add('bg-white', 'text-stone-600', 'border-stone-300');
+            });
+            const activeTab = document.getElementById(`local-tab-${key}`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-white', 'text-stone-600', 'border-stone-300');
+                activeTab.classList.add('bg-stone-900', 'text-white', 'border-stone-900');
+            }
+        }
+
+        function renderLocationPage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Prime Address</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Our Location</h1>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-6">
+                            <h3 class="font-serif text-3xl font-bold text-stone-900">Tema - Community 25, Greater Accra, Ghana</h3>
+                            <p class="text-stone-600 font-light leading-relaxed">
+                                RoyalHood Aparts Hotel offers a tranquil, secure residence in a prime location, with convenient access to nearby beaches, supermarkets, restaurants, shopping centres, commercial hubs, essential amenities, and major transport links, making everyday living and exploring the city effortless.
+                            </p>
+                        </div>
+                        <div class="h-[400px] bg-stone-200 rounded-2xl overflow-hidden border border-stone-300 relative">
+                            <iframe
+                                src="https://www.google.com/maps?q=RoyalHood+Apart+Hotels,+Tema+Community+25,+Greater+Accra,+Ghana&output=embed"
+                                class="absolute inset-0 w-full h-full border-0"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                title="RoyalHood Aparts Hotel Location Map">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+                ${renderLocalAreaSection()}
+            `;
+        }
+
+        function renderAboutPage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Our Heritage</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">About RoyalHood</h1>
+                </div>
+                <div class="max-w-4xl mx-auto px-4 py-16 space-y-12">
+                    <div class="space-y-6">
+                        <h2 class="font-serif text-3xl text-stone-900">The Philosophy of Quiet Luxury</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base mb-5">
+    				RoyalHood Aparts Hotel bridges the gap between boutique hospitality and the privacy of exclusive residential living. Located in Tema Community 25, Royalhood Aparts Hotel is conveniently located within many amenities such as supermarkets, hospitals, shopping malls, restaurants, and more. We are only 15 minutes from Prampram beach making it the perfect destination for guests wanting to spend time by the seaside.
+			</p>
+			<p class="text-stone-600 font-light leading-relaxed text-base">
+				We believe a truly exceptional stay is defined by more than beautiful spaces. It is about thoughtful design, genuine comfort, attentive service, and the freedom to feel completely at home. Every detail is carefully considered to create an environment that feels refined yet welcoming, private yet connected. 
+			</p>
+			<p class="text-stone-600 font-light leading-relaxed text-base">
+				Our philosophy is simple: hospitality should feel personal. From the way our residences are presented to the care given to every guest, we strive to provide a seamless experience where comfort, privacy, and warm Ghanaian hospitality come together. 
+			</p>
+			<p class="text-stone-600 font-light leading-relaxed text-base">
+				At RoyalHood, we invite you to settle in, slow down, and experience Tema from a more personal perspective. 
+			</p>
+                        <p class="mt-8 pt-5 border-t border-stone-200 text-center text-stone-600 font-light italic tracking-wide">
+                                <span class="text-base">RoyalHood Aparts Hotel:</span> <span class="text-sm">Discover the Difference.</span>
+                         </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPrivacyPolicyPage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Legal</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Privacy Policy</h1>
+                </div>
+                <div class="max-w-4xl mx-auto px-4 py-16 space-y-10">
+                    <p class="text-stone-600 font-light leading-relaxed text-base">
+                        We are committed to protecting the privacy of our guests and website visitors. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or stay at our residences.
+                    </p>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Information We Collect</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            We may collect personal information such as your name, email address, phone number, postal address, payment details, identification documents, and reservation preferences when you make a booking, contact us, or use our website. We may also automatically collect technical information such as your IP address, browser type, and browsing behavior on our site.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Use of Information</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            We use the information we collect to process reservations, verify identity, provide requested services, communicate with guests, improve our offerings, ensure security, and comply with legal obligations. We may also use your contact details to respond to enquiries or send service-related updates.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Cookies</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Our website may use cookies and similar technologies to enhance your browsing experience, remember your preferences, and analyze site traffic. You can adjust your browser settings to refuse cookies, though some features of the website may not function properly as a result.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Data Protection</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            We implement reasonable administrative, technical, and physical safeguards designed to protect your personal information from unauthorized access, loss, misuse, or alteration. Access to guest information is limited to authorized personnel who require it to perform their duties.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Third-Party Services</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            We may share information with trusted third parties who assist us in operating our business, such as payment processors, booking platforms, and IT service providers. These parties are only permitted to use your information as necessary to provide their services to us, and are expected to maintain appropriate confidentiality and security standards.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Guest Rights</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Guests have the right to request access to, correction of, or deletion of their personal information, subject to applicable law and any legitimate business or legal record-keeping requirements. You may also object to or request restriction of certain uses of your information.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Contact Information</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            If you have any questions or concerns about this Privacy Policy or how your information is handled, please contact us at royalhoodhotels@gmail.com or +233 (0) 24 464 5937 or  +44 (0) 740 365 9664.
+                        </p>
+                    </div>
+
+                    <p class="text-stone-400 font-light leading-relaxed text-sm pt-4 border-t border-stone-200">
+                        This Privacy Policy may be updated from time to time. Any changes will be posted on this page.
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderTermsOfResidencePage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Legal</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Terms of Residence</h1>
+                </div>
+                <div class="max-w-4xl mx-auto px-4 py-16 space-y-10">
+                    <p class="text-stone-600 font-light leading-relaxed text-base">
+                        These Terms of Residence govern all reservations and stays at RoyalHood Aparts Hotel. By booking or staying with us, guests agree to abide by the following terms.
+                    </p>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Reservations</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            All reservations are subject to availability and confirmation by RoyalHood Aparts Hotel. A valid form of identification and, where applicable, a deposit or full payment may be required to secure a booking.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Check-In & Check-Out</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Standard check-in time is from 2:00 PM and check-out time is by 12:00 PM, unless otherwise arranged in advance. Early check-in or late check-out is subject to availability and may incur additional charges.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Payment</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Full or partial payment may be required at the time of booking, with the balance due upon check-in unless otherwise agreed. We accept the payment methods indicated at the time of reservation. All rates are subject to applicable taxes and fees.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Cancellations</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Cancellation and refund policies vary depending on the rate and season selected at the time of booking. Guests are encouraged to review the specific cancellation terms provided during the reservation process. Late cancellations or no-shows may be subject to charges.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Guest Conduct</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Guests are expected to conduct themselves in a respectful manner toward staff, other guests, and neighboring residents. Excessive noise, disruptive behavior, or illegal activity will not be tolerated and may result in immediate termination of the stay without refund.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Property Care</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Guests are responsible for the care of the apartment and its contents during their stay. Any damage beyond normal wear and tear may be charged to the guest. Smoking may be restricted to designated areas as indicated within the property.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Visitors</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            Visitors are welcome during reasonable hours but may not stay overnight unless registered as an additional guest with management. RoyalHood reserves the right to verify the identity of visitors for security purposes.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">Liability</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            RoyalHood Aparts Hotel shall not be held liable for loss, theft, or damage to personal belongings during a guest's stay, except where required by applicable law. Guests are encouraged to safeguard their valuables and use any provided in-room safes.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="font-serif text-2xl text-stone-900">General</h2>
+                        <p class="text-stone-600 font-light leading-relaxed text-base">
+                            RoyalHood Aparts Hotel reserves the right to amend these Terms of Residence at any time. Continued use of our services constitutes acceptance of the current terms. For questions regarding these terms, please contact us at royalhoodhotels@gmail.com or +233 (0) 24 464 5937 | +44 (0) 740 365 9664.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderContactPage() {
+            return `
+                <div class="bg-stone-900 text-white py-16 px-4 text-center">
+                    <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Get in Touch</span>
+                    <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Contact Concierge</h1>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div class="space-y-8">
+                            <h3 class="font-serif text-2xl font-bold text-stone-900">We are here to assist you</h3>
+                            <div class="space-y-6 text-stone-600">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center text-accent"><i class="fa-solid fa-phone text-lg"></i></div>
+                                    <div>
+                                        <div class="text-xs uppercase tracking-wider font-bold text-stone-400">Phone & WhatsApp</div>
+                                        <div class="text-stone-900 font-semibold">+233 (0) 24 464 5937 </br> +44 (0) 740 365 9664</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center text-accent"><i class="fa-solid fa-envelope text-lg"></i></div>
+                                    <div>
+                                        <div class="text-xs uppercase tracking-wider font-bold text-stone-400">Email Address</div>
+                                        <div class="text-stone-900 font-semibold">royalhoodhotels@gmail.com</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
+                            <h3 class="font-serif text-xl font-bold text-stone-900 mb-6">Send a Message</h3>
+                            <form id="contact-form" onsubmit="handleContactSubmission(event)" class="space-y-4">
+                                <div id="contact-form-alert" class="hidden px-4 py-3 rounded-xl text-xs"></div>
+                                <div><label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Your Name</label><input type="text" id="contact-name" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900"></div>
+                                <div><label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Email</label><input type="email" id="contact-email" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900"></div>
+                                <div><label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Message</label><textarea id="contact-message" rows="4" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900"></textarea></div>
+                                <button type="submit" id="contact-submit-btn" class="w-full bg-stone-900 text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent transition-colors">Send Inquiry</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ==========================================================================
+           4. CONTACT & BOOKING LOGIC & CONFIRMATION
+           ================================================================---------- */
+
+        async function handleContactSubmission(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('contact-name');
+            const emailInput = document.getElementById('contact-email');
+            const messageInput = document.getElementById('contact-message');
+            const submitBtn = document.getElementById('contact-submit-btn');
+            const alertBox = document.getElementById('contact-form-alert');
+
+            const payload = {
+                name: nameInput.value.trim(),
+                email: emailInput.value.trim(),
+                message: messageInput.value.trim(),
+                created_at: new Date().toISOString()
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sending Inquiry...";
+
+            const results = await Promise.allSettled([
+                (async () => {
+                    if (!supabaseClient) return;
+                    const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.messages).insert([payload]);
+                    if (error) throw error;
+                })(),
+                (async () => {
+                    if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === 'YOUR_WEB3FORMS_ACCESS_KEY') return;
+                    const res = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            access_key: WEB3FORMS_ACCESS_KEY,
+                            subject: `New contact form message from ${payload.name}`,
+                            from_name: 'RoyalHood Aparts Hotel Website',
+                            name: payload.name,
+                            email: payload.email,
+                            message: payload.message
+                        })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message || 'Web3Forms submission failed');
+                })()
+            ]);
+
+            const dbFailed = results[0].status === 'rejected';
+            const emailFailed = results[1].status === 'rejected';
+            if (dbFailed) console.error("Supabase Contact Message Error:", results[0].reason);
+            if (emailFailed) console.error("Web3Forms Contact Message Error:", results[1].reason);
+
+            if (!dbFailed || !emailFailed) {
+                alertBox.className = "px-4 py-3 rounded-xl text-xs bg-green-50 border border-green-200 text-green-700";
+                alertBox.innerText = "Thank you! Your message has been safely received by the concierge desk.";
+                alertBox.classList.remove('hidden');
+                document.getElementById('contact-form').reset();
+            } else {
+                alertBox.className = "px-4 py-3 rounded-xl text-xs bg-red-50 border border-red-200 text-red-700";
+                alertBox.innerText = "There was an error sending your message. Please try calling us directly.";
+                alertBox.classList.remove('hidden');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Send Inquiry";
+        }
+
+        function calculateBookingTotal(pricePerNight) {
+            const checkIn = document.getElementById('book-checkin').value;
+            const checkOut = document.getElementById('book-checkout').value;
+            if (!checkIn || !checkOut) return;
+
+            const inDate = new Date(checkIn);
+            const outDate = new Date(checkOut);
+            const diffTime = outDate - inDate;
+            const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (nights > 0) {
+                const total = nights * pricePerNight;
+                document.getElementById('nights-calc-label').innerText = `${nights} night${nights > 1 ? 's' : ''} × $${pricePerNight}`;
+                document.getElementById('subtotal-calc-val').innerText = `$${total.toLocaleString()}`;
+                document.getElementById('total-calc-val').innerText = `$${total.toLocaleString()}`;
+            }
+        }
+
+        async function handleBookingSubmission(event, roomId, roomName, pricePerNight) {
+            event.preventDefault();
+
+            const checkIn = document.getElementById('book-checkin').value;
+            const checkOut = document.getElementById('book-checkout').value;
+            const guests = parseInt(document.getElementById('book-guests').value);
+            const guestName = document.getElementById('book-name').value;
+            const email = document.getElementById('book-email').value;
+            const phone = document.getElementById('book-phone').value;
+            const specialRequests = document.getElementById('book-requests').value;
+
+            const availability = DB.checkAvailability(roomId, checkIn, checkOut);
+            if (!availability.available) {
+                alert(`Booking Error: ${availability.message}`);
+                return;
+            }
+
+            const inDate = new Date(checkIn);
+            const outDate = new Date(checkOut);
+            const nights = Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24));
+            const totalAmount = nights * pricePerNight;
+
+            const bookingId = `RH-${Math.floor(1000 + Math.random() * 9000)}`;
+            const now = new Date();
+            const bookingDate = now.toISOString().split('T')[0];
+            const bookingTime = now.toTimeString().substring(0, 5);
+
+            const newBooking = {
+                bookingId,
+                roomId,
+                roomName,
+                guestName,
+                email,
+                phone,
+                checkIn,
+                checkOut,
+                guests,
+                nights,
+                pricePerNight,
+                totalAmount,
+                specialRequests,
+                bookingStatus: "Confirmed",
+                bookingDate,
+                bookingTime
+            };
+
+            const bookings = DB.getBookings();
+            bookings.push(newBooking);
+            await DB.saveBookings(bookings);
+
+            showBookingConfirmationModal(newBooking);
+        }
+
+        function showBookingConfirmationModal(booking) {
+            const modal = document.getElementById('booking-modal');
+            const content = document.getElementById('booking-modal-content');
+
+            content.innerHTML = `
+                <div class="text-center space-y-4">
+                    <div class="w-16 h-16 bg-accent/20 text-stone-900 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="font-serif text-2xl font-bold text-stone-900">Reservation Confirmed</h3>
+                    <p class="text-xs text-stone-500">Thank you, <strong class="text-stone-900">${booking.guestName}</strong>. Your booking request has been successfully processed.</p>
+                    
+                    <div class="bg-stone-100 p-4 rounded-xl text-left text-xs space-y-2 border border-stone-200">
+                        <div class="flex justify-between"><span class="text-stone-500">Reference ID:</span> <strong class="text-stone-900">${booking.bookingId}</strong></div>
+                        <div class="flex justify-between"><span class="text-stone-500">Residence:</span> <strong class="text-stone-900">${booking.roomName}</strong></div>
+                        <div class="flex justify-between"><span class="text-stone-500">Check-in:</span> <strong class="text-stone-900">${booking.checkIn}</strong></div>
+                        <div class="flex justify-between"><span class="text-stone-500">Check-out:</span> <strong class="text-stone-900">${booking.checkOut}</strong></div>
+                        <div class="flex justify-between"><span class="text-stone-500">Total Amount to Pay:</span> <strong class="text-stone-900">$${booking.totalAmount.toLocaleString()} (${booking.nights} nights)</strong></div>
+                        <div class="flex justify-between"><span class="text-stone-500">Status:</span> <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-semibold">${booking.bookingStatus}</span></div>
+                    </div>
+
+                    <button onclick="closeBookingModal(); router.navigateTo('home');" class="w-full bg-stone-900 text-white py-3.5 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors">
+                        Return to Homepage
+                    </button>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+        }
+
+        function quickSearch() {
+            router.navigateTo('apartments');
+        }
+
+        /* ==========================================================================
+           5. ADMIN DASHBOARD & MANAGEMENT PORTAL (WITH SUPABASE AUTH)
+           ================================================================---------- */
+
+        function openAdminAuth() { document.getElementById('admin-modal').classList.remove('hidden'); }
+        function closeAdminAuth() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+        /* ==========================================================================
+           PHOTO LIGHTBOX ("View All Photos" for an apartment listing)
+           ================================================================---------- */
+        let lightboxPhotos = [];
+        let lightboxIndex = 0;
+
+        function openPhotoLightbox(roomId, startIndex) {
+            const photos = (window.__roomPhotoSets && window.__roomPhotoSets[roomId]) || [];
+            if (photos.length === 0) return;
+            lightboxPhotos = photos;
+            lightboxIndex = startIndex || 0;
+            renderLightbox();
+            const modal = document.getElementById('photo-lightbox-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePhotoLightbox() {
+            const modal = document.getElementById('photo-lightbox-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function lightboxNext() {
+            if (lightboxPhotos.length === 0) return;
+            lightboxIndex = (lightboxIndex + 1) % lightboxPhotos.length;
+            renderLightbox();
+        }
+
+        function lightboxPrev() {
+            if (lightboxPhotos.length === 0) return;
+            lightboxIndex = (lightboxIndex - 1 + lightboxPhotos.length) % lightboxPhotos.length;
+            renderLightbox();
+        }
+
+        function lightboxGoTo(index) {
+            lightboxIndex = index;
+            renderLightbox();
+        }
+
+        function renderLightbox() {
+            document.getElementById('lightbox-main-image').src = lightboxPhotos[lightboxIndex];
+            document.getElementById('lightbox-counter').innerText = `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
+            document.getElementById('lightbox-thumbnails').innerHTML = lightboxPhotos.map((img, i) => `
+                <button onclick="lightboxGoTo(${i})" class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 ${i === lightboxIndex ? 'border-accent' : 'border-transparent opacity-60 hover:opacity-100'} transition-all">
+                    <img src="${img}" class="w-full h-full object-cover">
+                </button>
+            `).join('');
+        }
+
+        // Keyboard navigation for the lightbox (Escape to close, arrows to browse).
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('photo-lightbox-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closePhotoLightbox();
+            if (e.key === 'ArrowRight') lightboxNext();
+            if (e.key === 'ArrowLeft') lightboxPrev();
+        });
+
+        async function handleAdminLogin(event) {
+            event.preventDefault();
+            const u = document.getElementById('admin-user').value.trim();
+            const p = document.getElementById('admin-pass').value;
+
+            if (!supabaseClient) {
+                alert('Supabase client is not initialized.');
+                return;
+            }
+
+            const email = u.includes('@') ? u : `${u}@royalhoodaparthotels.com`;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: p
+                });
+
+                if (error) {
+                    alert('Authentication failed: ' + error.message);
+                    return;
+                }
+
+                currentSession = data.session;
+                closeAdminAuth();
+                router.navigateTo('admin');
+            } catch (err) {
+                console.error('Login error:', err);
+                alert('An unexpected error occurred during authentication.');
+            }
+        }
+
+        async function handleAdminLogout() {
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.auth.signOut();
+                } catch (err) {
+                    console.error('Logout error:', err);
+                }
+            }
+            currentSession = null;
+            router.navigateTo('home');
+            alert('You have been securely signed out.');
+        }
+
+        function renderAdminDashboard() {
+            const bookings = DB.getBookings();
+            const rooms = DB.getRooms();
+            const totalRevenue = bookings.filter(b => b.bookingStatus !== 'Cancelled').reduce((acc, b) => acc + b.totalAmount, 0);
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-stone-200">
+                        <div>
+                            <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-1 block">Management Console</span>
+                            <h1 class="font-serif text-3xl font-bold text-stone-900">Admin Dashboard</h1>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="router.navigateTo('home')" class="bg-stone-200 text-stone-800 px-4 py-2 rounded-lg text-xs uppercase tracking-widest font-semibold hover:bg-stone-300">
+                                View Public Site
+                            </button>
+                            <button onclick="handleAdminLogout()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs uppercase tracking-widest font-semibold hover:bg-red-700 transition-colors">
+                                <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                            <div class="text-xs uppercase tracking-wider text-stone-400 font-bold">Total Bookings</div>
+                            <div class="font-serif text-3xl font-bold text-stone-900">${bookings.length}</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                            <div class="text-xs uppercase tracking-wider text-stone-400 font-bold">Active Rooms</div>
+                            <div class="font-serif text-3xl font-bold text-stone-900">${rooms.filter(r => r.active).length}</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                            <div class="text-xs uppercase tracking-wider text-stone-400 font-bold">Total Revenue</div>
+                            <div class="font-serif text-3xl font-bold text-stone-900">$${totalRevenue.toLocaleString()}</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                            <div class="text-xs uppercase tracking-wider text-stone-400 font-bold">Datastore</div>
+                            <div class="text-xs font-bold text-stone-900 bg-accent/15 px-2 py-1 rounded inline-block mt-1">Supabase Linked</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-stone-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <h3 class="font-serif text-xl font-bold text-stone-900">Reservations Management</h3>
+                            <div class="flex items-center gap-3">
+                                <input type="text" id="admin-search" placeholder="Search guest name..." onkeyup="filterAdminBookings()" class="bg-stone-100 border border-stone-300 rounded-lg px-4 py-2 text-xs focus:outline-none focus:border-stone-900">
+                                <select id="admin-status-filter" onchange="filterAdminBookings()" class="bg-stone-100 border border-stone-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-stone-900">
+                                    <option value="ALL">All Statuses</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-stone-100 text-stone-500 uppercase tracking-wider font-semibold border-b border-stone-200">
+                                    <tr>
+                                        <th class="p-4">Ref ID</th>
+                                        <th class="p-4">Guest Name</th>
+                                        <th class="p-4">Apartment</th>
+                                        <th class="p-4">Dates</th>
+                                        <th class="p-4">Total</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-bookings-tbody" class="divide-y divide-stone-100 text-stone-700">
+                                    ${bookings.length === 0 ? `
+                                        <tr><td colspan="7" class="p-6 text-center text-stone-400">No reservations recorded yet.</td></tr>
+                                    ` : bookings.map(b => `
+                                        <tr class="hover:bg-stone-50">
+                                            <td class="p-4 font-mono font-semibold text-stone-900">${b.bookingId}</td>
+                                            <td class="p-4 font-medium text-stone-900">${b.guestName}<br><span class="text-[10px] text-stone-400">${b.email}</span><br><span class="text-[10px] text-stone-500"><i class="fa-solid fa-phone mr-1 text-accent"></i>${b.phone}</span></td>
+                                            <td class="p-4">${b.roomName}</td>
+                                            <td class="p-4">${b.checkIn} to ${b.checkOut} (${b.nights}n)</td>
+                                            <td class="p-4 font-bold text-stone-900">$${b.totalAmount.toLocaleString()}</td>
+                                            <td class="p-4">
+                                                <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold ${b.bookingStatus === 'Confirmed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                                    ${b.bookingStatus}
+                                                </span>
+                                            </td>
+                                            <td class="p-4 space-x-2">
+                                                <button onclick="updateBookingStatus('${b.bookingId}', 'Confirmed')" class="text-blue-600 hover:underline font-medium">Confirm</button>
+                                                <button onclick="updateBookingStatus('${b.bookingId}', 'Cancelled')" class="text-red-600 hover:underline font-medium">Cancel</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden p-6 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-serif text-xl font-bold text-stone-900">Apartment Inventory Management</h3>
+                            <button onclick="addNewRoomPrompt()" class="bg-stone-900 text-white px-4 py-2 rounded-lg text-xs uppercase tracking-widest font-semibold hover:bg-accent transition-colors">
+                                <i class="fa-solid fa-plus mr-1"></i> Add Room
+                            </button>
+                        </div>
+                        ${rooms.length === 0 ? `
+                            <div class="text-center py-12 border border-dashed border-stone-200 rounded-xl space-y-3">
+                                <p class="text-xs text-stone-500">No apartments currently exist in the system.</p>
+                                <button onclick="addNewRoomPrompt()" class="bg-stone-900 text-white px-4 py-2 rounded-lg text-xs uppercase tracking-widest font-semibold hover:bg-accent">Add Your First Apartment</button>
+                            </div>
+                        ` : `
+                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                                ${rooms.map(r => `
+                                    <div class="border border-stone-200 rounded-xl p-4 space-y-3 bg-stone-50 flex flex-col justify-between">
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-start">
+                                                <h4 class="font-serif font-bold text-stone-900 text-base">${r.name}</h4>
+                                                <span class="text-xs font-bold text-stone-900 bg-white px-2 py-1 rounded shadow-sm">$${r.pricePerNight}/night</span>
+                                            </div>
+                                            <p class="text-xs text-stone-500 line-clamp-2">${r.description}</p>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs gap-2 flex-wrap">
+                                            <button onclick="toggleRoomStatus('${r.id}')" class="px-3 py-1 rounded font-semibold ${r.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                                ${r.active ? 'Active' : 'Inactive'}
+                                            </button>
+                                            <div class="flex items-center gap-1">
+                                                <button onclick="openEditRoomModal('${r.id}')" class="text-stone-700 hover:text-stone-900 font-semibold px-2 py-1 rounded hover:bg-stone-200 transition-colors" title="Edit ${r.name.replace(/'/g, "\\'")}" aria-label="Edit ${r.name.replace(/'/g, "\\'")}">
+                                                    <i class="fa-solid fa-pen mr-1"></i> Edit
+                                                </button>
+                                                <button onclick="confirmDeleteRoom('${r.id}', '${r.name.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800 font-semibold px-2 py-1 rounded hover:bg-red-50 transition-colors">
+                                                    <i class="fa-solid fa-trash-can mr-1"></i> Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function updateBookingStatus(bookingId, newStatus) {
+            const bookings = DB.getBookings();
+            const b = bookings.find(item => item.bookingId === bookingId);
+            if (b) {
+                b.bookingStatus = newStatus;
+                await DB.saveBookings(bookings);
+                router.navigateTo('admin');
+            }
+        }
+
+        async function toggleRoomStatus(roomId) {
+            const rooms = DB.getRooms();
+            const r = rooms.find(item => item.id === roomId);
+            if (r) {
+                r.active = !r.active;
+                await DB.saveRooms(rooms);
+                router.navigateTo('admin');
+            }
+        }
+
+        async function confirmDeleteRoom(roomId, roomName) {
+            const confirmed = confirm(`Are you sure you want to permanently delete "${roomName}"? This action cannot be undone.`);
+            if (!confirmed) return;
+
+            await DB.deleteRoomFromDb(roomId);
+            router.navigateTo('admin');
+        }
+
+        function addNewRoomPrompt() {
+            document.getElementById('add-room-error').classList.add('hidden');
+            document.getElementById('room-extra-photos').innerHTML = '';
+            roomExtraPhotoCount = 0;
+            document.getElementById('add-room-modal').classList.remove('hidden');
+        }
+
+        function closeAddRoomModal() {
+            document.getElementById('add-room-modal').classList.add('hidden');
+        }
+
+        function handleImageFileSelect(event, hiddenInputId, previewImgId) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(hiddenInputId).value = e.target.result;
+                const preview = document.getElementById(previewImgId);
+                if (preview) preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Lets an admin attach as many extra photos as they want when adding a room,
+        // beyond the fixed Photo 1/2/3 slots, without touching any existing logic.
+        let roomExtraPhotoCount = 0;
+        function addRoomPhotoSlot() {
+            roomExtraPhotoCount++;
+            const n = roomExtraPhotoCount;
+            const fileId = `room-photo-extra-${n}-file`;
+            const previewId = `room-photo-extra-${n}-preview`;
+            const hiddenId = `room-gallery-image-extra-${n}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'room-extra-photo-slot relative';
+            wrapper.innerHTML = `
+                <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo ${n + 3}</label>
+                <input type="file" id="${fileId}" accept="image/*" onchange="handleImageFileSelect(event, '${hiddenId}', '${previewId}')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                <img id="${previewId}" src="" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                <input type="hidden" id="${hiddenId}" class="room-gallery-extra-input">
+                <button type="button" onclick="this.closest('.room-extra-photo-slot').remove()" class="absolute top-0 right-0 text-stone-400 hover:text-red-600 text-xs px-1" title="Remove photo"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            document.getElementById('room-extra-photos').appendChild(wrapper);
+        }
+
+        // Same idea for the Edit Apartment modal's extra photo slots.
+        let editRoomExtraPhotoCount = 0;
+        function addEditRoomPhotoSlot(initialValue) {
+            editRoomExtraPhotoCount++;
+            const n = editRoomExtraPhotoCount;
+            const fileId = `edit-room-photo-extra-${n}-file`;
+            const previewId = `edit-room-photo-extra-${n}-preview`;
+            const hiddenId = `edit-room-gallery-image-extra-${n}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'edit-room-extra-photo-slot relative';
+            wrapper.innerHTML = `
+                <label class="block text-xs uppercase tracking-wider font-semibold text-stone-600 mb-1">Photo ${n + 3}</label>
+                <input type="file" id="${fileId}" accept="image/*" onchange="handleImageFileSelect(event, '${hiddenId}', '${previewId}')" class="w-full bg-stone-100 border border-stone-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                <img id="${previewId}" src="" class="mt-2 w-full h-24 object-cover rounded-lg border border-stone-300">
+                <input type="hidden" id="${hiddenId}" class="edit-room-gallery-extra-input">
+                <button type="button" onclick="this.closest('.edit-room-extra-photo-slot').remove()" class="absolute top-0 right-0 text-stone-400 hover:text-red-600 text-xs px-1" title="Remove photo"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            document.getElementById('edit-room-extra-photos').appendChild(wrapper);
+
+            if (initialValue) {
+                document.getElementById(hiddenId).value = initialValue;
+                document.getElementById(previewId).src = initialValue;
+            }
+        }
+
+        async function handleAddNewRoomSubmission(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('room-name').value.trim();
+            const price = parseFloat(document.getElementById('room-price').value);
+            const desc = document.getElementById('room-desc').value.trim();
+            const maxGuests = parseInt(document.getElementById('room-max-guests').value);
+            const bedrooms = parseInt(document.getElementById('room-bedrooms').value);
+            const beds = parseInt(document.getElementById('room-beds').value);
+            const bathrooms = parseFloat(document.getElementById('room-bathrooms').value);
+            const mainImage = document.getElementById('room-main-image').value.trim();
+            const photo2 = document.getElementById('room-gallery-image-2').value.trim();
+            const photo3 = document.getElementById('room-gallery-image-3').value.trim();
+            const active = document.getElementById('room-active').checked;
+            const checkInTime = document.getElementById('room-checkin-time').value.trim();
+            const checkOutTime = document.getElementById('room-checkout-time').value.trim();
+
+            const errorBox = document.getElementById('add-room-error');
+            if (!name || isNaN(price) || price <= 0 || !desc || !mainImage || !checkInTime || !checkOutTime) {
+                errorBox.innerText = "Please complete all required fields correctly.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            const extraPhotos = Array.from(document.querySelectorAll('.room-gallery-extra-input')).map(el => el.value.trim());
+            let galleryImages = [photo2, photo3, ...extraPhotos].filter(s => s.length > 0);
+            if (galleryImages.length === 0) galleryImages = [mainImage];
+            const amenities = [];
+            document.querySelectorAll('#room-amenities-checkboxes input[name="amenity"]:checked').forEach(cb => amenities.push(cb.value));
+
+            const newRoom = {
+                id: `room-${Date.now()}`,
+                name,
+                description: desc,
+                pricePerNight: price,
+                maxGuests,
+                bedrooms,
+                beds,
+                bathrooms,
+                amenities,
+                mainImage,
+                galleryImages,
+                active,
+                checkInTime,
+                checkOutTime
+            };
+
+            const rooms = DB.getRooms();
+            rooms.push(newRoom);
+            await DB.saveRooms(rooms);
+
+            closeAddRoomModal();
+            router.navigateTo('admin');
+        }
+
+        function openEditRoomModal(roomId) {
+            const rooms = DB.getRooms();
+            const room = rooms.find(r => r.id === roomId);
+            if (!room) {
+                alert('This apartment could not be found. It may have just been deleted.');
+                router.navigateTo('admin');
+                return;
+            }
+
+            document.getElementById('edit-room-error').classList.add('hidden');
+            document.getElementById('edit-room-id').value = room.id;
+            document.getElementById('edit-room-name').value = room.name || '';
+            document.getElementById('edit-room-price').value = room.pricePerNight;
+            document.getElementById('edit-room-active').checked = !!room.active;
+            document.getElementById('edit-room-desc').value = room.description || '';
+            document.getElementById('edit-room-max-guests').value = room.maxGuests;
+            document.getElementById('edit-room-bedrooms').value = room.bedrooms;
+            document.getElementById('edit-room-beds').value = room.beds;
+            document.getElementById('edit-room-bathrooms').value = room.bathrooms;
+            document.getElementById('edit-room-main-image').value = room.mainImage || '';
+            document.getElementById('edit-room-main-image-preview').src = room.mainImage || '';
+            const editGalleryImages = room.galleryImages || [];
+            document.getElementById('edit-room-gallery-image-2').value = editGalleryImages[0] || '';
+            document.getElementById('edit-room-photo-2-preview').src = editGalleryImages[0] || '';
+            document.getElementById('edit-room-gallery-image-3').value = editGalleryImages[1] || '';
+            document.getElementById('edit-room-photo-3-preview').src = editGalleryImages[1] || '';
+            document.getElementById('edit-room-main-image-file').value = '';
+            document.getElementById('edit-room-photo-2-file').value = '';
+            document.getElementById('edit-room-photo-3-file').value = '';
+            document.getElementById('edit-room-extra-photos').innerHTML = '';
+            editRoomExtraPhotoCount = 0;
+            editGalleryImages.slice(2).forEach(img => addEditRoomPhotoSlot(img));
+            const roomSettings = DB.getSettings() || DEFAULT_SETTINGS;
+            document.getElementById('edit-room-checkin-time').value = room.checkInTime || roomSettings.checkInTime;
+            document.getElementById('edit-room-checkout-time').value = room.checkOutTime || roomSettings.checkOutTime;
+
+            const amenities = room.amenities || [];
+            document.querySelectorAll('#edit-room-amenities-checkboxes input[name="edit-amenity"]').forEach(cb => {
+                cb.checked = amenities.includes(cb.value);
+            });
+
+            document.getElementById('edit-room-modal').classList.remove('hidden');
+        }
+
+        function closeEditRoomModal() {
+            document.getElementById('edit-room-modal').classList.add('hidden');
+            document.getElementById('edit-room-form').reset();
+            document.getElementById('edit-room-id').value = '';
+            document.getElementById('edit-room-extra-photos').innerHTML = '';
+            editRoomExtraPhotoCount = 0;
+        }
+
+        async function handleEditRoomSubmission(event) {
+            event.preventDefault();
+
+            const roomId = document.getElementById('edit-room-id').value;
+            const errorBox = document.getElementById('edit-room-error');
+
+            const rooms = DB.getRooms();
+            const roomIndex = rooms.findIndex(r => r.id === roomId);
+            if (roomIndex === -1) {
+                errorBox.innerText = "This apartment no longer exists. It may have been deleted in another session.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            const name = document.getElementById('edit-room-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-room-price').value);
+            const desc = document.getElementById('edit-room-desc').value.trim();
+            const maxGuests = parseInt(document.getElementById('edit-room-max-guests').value);
+            const bedrooms = parseInt(document.getElementById('edit-room-bedrooms').value);
+            const beds = parseInt(document.getElementById('edit-room-beds').value);
+            const bathrooms = parseFloat(document.getElementById('edit-room-bathrooms').value);
+            const mainImage = document.getElementById('edit-room-main-image').value.trim();
+            const editPhoto2 = document.getElementById('edit-room-gallery-image-2').value.trim();
+            const editPhoto3 = document.getElementById('edit-room-gallery-image-3').value.trim();
+            const active = document.getElementById('edit-room-active').checked;
+            const checkInTime = document.getElementById('edit-room-checkin-time').value.trim();
+            const checkOutTime = document.getElementById('edit-room-checkout-time').value.trim();
+
+            if (!name || isNaN(price) || price <= 0 || !desc || !mainImage || !checkInTime || !checkOutTime) {
+                errorBox.innerText = "Please complete all required fields correctly.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+            if (isNaN(maxGuests) || maxGuests < 1 || isNaN(bedrooms) || bedrooms < 0 || isNaN(beds) || beds < 1 || isNaN(bathrooms) || bathrooms < 0.5) {
+                errorBox.innerText = "Please enter valid capacity and layout values.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            const editExtraPhotos = Array.from(document.querySelectorAll('.edit-room-gallery-extra-input')).map(el => el.value.trim());
+            let galleryImages = [editPhoto2, editPhoto3, ...editExtraPhotos].filter(s => s.length > 0);
+            if (galleryImages.length === 0) galleryImages = [mainImage];
+            const amenities = [];
+            document.querySelectorAll('#edit-room-amenities-checkboxes input[name="edit-amenity"]:checked').forEach(cb => amenities.push(cb.value));
+
+            errorBox.classList.add('hidden');
+
+            // Preserve the existing room's id and any other fields not present on this form.
+            const existingRoom = rooms[roomIndex];
+            rooms[roomIndex] = {
+                ...existingRoom,
+                name,
+                description: desc,
+                pricePerNight: price,
+                maxGuests,
+                bedrooms,
+                beds,
+                bathrooms,
+                amenities,
+                mainImage,
+                galleryImages,
+                active,
+                checkInTime,
+                checkOutTime
+            };
+
+            await DB.saveRooms(rooms);
+
+            closeEditRoomModal();
+            router.navigateTo('admin');
+        }
+
+        function filterAdminBookings() {
+            const query = document.getElementById('admin-search').value.toLowerCase();
+            const statusFilter = document.getElementById('admin-status-filter').value;
+            const bookings = DB.getBookings();
+            
+            const filtered = bookings.filter(b => {
+                const matchName = b.guestName.toLowerCase().includes(query) || b.bookingId.toLowerCase().includes(query);
+                const matchStatus = statusFilter === 'ALL' || b.bookingStatus === statusFilter;
+                return matchName && matchStatus;
+            });
+
+            const tbody = document.getElementById('admin-bookings-tbody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-stone-400">No matching reservations found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(b => `
+                <tr class="hover:bg-stone-50">
+                    <td class="p-4 font-mono font-semibold text-stone-900">${b.bookingId}</td>
+                    <td class="p-4 font-medium text-stone-900">${b.guestName}<br><span class="text-[10px] text-stone-400">${b.email}</span><br><span class="text-[10px] text-stone-500"><i class="fa-solid fa-phone mr-1 text-accent"></i>${b.phone}</span></td>
+                    <td class="p-4">${b.roomName}</td>
+                    <td class="p-4">${b.checkIn} to ${b.checkOut} (${b.nights}n)</td>
+                    <td class="p-4 font-bold text-stone-900">$${b.totalAmount.toLocaleString()}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold ${b.bookingStatus === 'Confirmed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${b.bookingStatus}
+                        </span>
+                    </td>
+                    <td class="p-4 space-x-2">
+                        <button onclick="updateBookingStatus('${b.bookingId}', 'Confirmed')" class="text-blue-600 hover:underline font-medium">Confirm</button>
+                        <button onclick="updateBookingStatus('${b.bookingId}', 'Cancelled')" class="text-red-600 hover:underline font-medium">Cancel</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           6. INITIALIZE APPLICATION & ROUTER ON LOAD
+           ================================================================---------- */
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Show a proper loading state while the current apartment data is being
+            // fetched, instead of leaving stale/cached content on screen.
+            document.getElementById('app-container').innerHTML = `
+                <div class="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4">
+                    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-accent"></i>
+                    <p class="text-xs uppercase tracking-widest text-stone-400">Loading apartments&hellip;</p>
+                </div>`;
+
+            await DB.init();
+            
+            // Check initial URL hash on page load/refresh
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const parts = hash.split('/');
+                router.navigateTo(parts[0], parts[1] || null, false);
+            } else {
+                router.navigateTo('home', null, false);
+                history.replaceState({ page: 'home', param: null }, '', '#home');
+            }
+        });
+    </script>
+</body>
+</html>
