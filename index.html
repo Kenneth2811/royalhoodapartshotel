@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoyalHood Aparts Hotel</title>
-    <meta name="description" content="Experience refined minimalist luxury at RoyalHood Aparts Hotel. Premium serviced apartments featuring world-class amenities, stunning views, and bespoke hospitality.">
+    <title>RoyalHood Apart Hotels</title>
+    <meta name="description" content="Experience refined minimalist luxury at RoyalHood Apart Hotels. Premium serviced apartments featuring world-class amenities, stunning views, and bespoke hospitality.">
     <link rel="icon" type="image/png" href="images/logo.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -67,9 +67,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Logo -->
             <a href="#" onclick="router.navigateTo('home'); return false;" class="flex items-center gap-2 group">
-                <img src="images/logo.png" alt="RoyalHood Aparts Hotel Logo" class="w-14 h-14 object-contain">
+                <img src="images/logo.png" alt="RoyalHood Apart Hotels Logo" class="w-14 h-14 object-contain">
                 <div class="flex flex-col">
-                    <span class="font-serif text-xl tracking-wider font-bold text-stone-900">RoyalHood Aparts Hotel</span>
+                    <span class="font-serif text-xl tracking-wider font-bold text-stone-900">RoyalHood Apart Hotels</span>
                 </div>
             </a>
 
@@ -134,9 +134,9 @@
                 <!-- Col 1 -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <img src="images/logo.png" alt="RoyalHood Aparts Hotel Logo" class="w-12 h-12 object-contain">
+                        <img src="images/logo.png" alt="RoyalHood Apart Hotels Logo" class="w-12 h-12 object-contain">
                         <div class="flex flex-col items-center">
-                            <span class="font-serif text-xl tracking-wider text-white">RoyalHood Aparts Hotel</span>
+                            <span class="font-serif text-xl tracking-wider text-white">RoyalHood Apart Hotels</span>
                             <p class="mt-1 text-sm text-stone-400/90 leading-7 font-light italic tracking-[0.08em] text-center">
                                 Discover the Difference.
                             </p>
@@ -184,7 +184,7 @@
 
             <!-- Bottom Sub-footer -->
             <div class="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between text-xs text-stone-500 gap-4">
-                <p>&copy; 2026 RoyalHood Aparts Hotel. All rights reserved. <b> ~ Designed by MaceInk Technologies (+233 (0) 54 555 3048)</p>
+                <p>&copy; 2026 RoyalHood Apart Hotels. All rights reserved. <b> ~ Designed by MaceInk Technologies (+233 (0) 54 555 3048)</p>
                 <div class="flex items-center gap-6">
                     <a href="#" onclick="router.navigateTo('privacy-policy'); return false;" class="hover:text-stone-300 transition-colors">Privacy Policy</a>
                     <a href="#" onclick="router.navigateTo('terms-of-residence'); return false;" class="hover:text-stone-300 transition-colors">Terms of Residence</a>
@@ -546,7 +546,7 @@
         }
 
         const DEFAULT_SETTINGS = {
-            propertyName: "RoyalHood Aparts Hotel",
+            propertyName: "RoyalHood Apart Hotels",
             address: "Tema - Community 25, Greater Accra, Ghana",
             phone: "+233 (0) 24 464 5937 +44 740 365 9664",
             email: "royalhoodhotels@gmail.com",
@@ -1194,7 +1194,7 @@
                 <div class="bg-stone-900 text-white py-16 px-4 text-center">
                     <span class="text-accent text-xs font-semibold tracking-widest uppercase mb-2 block">Visual Portfolio</span>
                     <h1 class="font-serif text-4xl sm:text-5xl font-normal mb-4">Property Gallery</h1>
-                    <p class="text-stone-400 text-sm max-w-xl mx-auto font-light">Explore the architecture, interior design, and lush surroundings of RoyalHood Aparts Hotel.</p>
+                    <p class="text-stone-400 text-sm max-w-xl mx-auto font-light">Explore the architecture, interior design, and lush surroundings of RoyalHood Apart Hotels.</p>
                 </div>
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -1362,18 +1362,27 @@
                         <div class="space-y-6">
                             <h3 class="font-serif text-3xl font-bold text-stone-900">Tema - Community 25, Greater Accra, Ghana</h3>
                             <p class="text-stone-600 font-light leading-relaxed">
-                                RoyalHood Aparts Hotel offers a tranquil, secure residence in a prime location, with convenient access to nearby beaches, supermarkets, restaurants, shopping centres, commercial hubs, essential amenities, and major transport links, making everyday living and exploring the city effortless.
+                                RoyalHood Apart Hotels offers a tranquil, secure residence in a prime location, with convenient access to nearby beaches, supermarkets, restaurants, shopping centres, commercial hubs, essential amenities, and major transport links, making everyday living and exploring the city effortless.
                             </p>
                         </div>
                         <div class="h-[400px] bg-stone-200 rounded-2xl overflow-hidden border border-stone-300 relative">
                             <iframe
-                                src="https://www.google.com/maps?q=RoyalHood+Apart+Hotels,+Tema+Community+25,+Greater+Accra,+Ghana&output=embed"
+                                src="https://www.google.com/maps?q=5.732708,0.030119&z=17&output=embed"
                                 class="absolute inset-0 w-full h-full border-0"
                                 allowfullscreen=""
                                 loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade"
-                                title="RoyalHood Aparts Hotel Location Map">
+                                title="RoyalHood Apart Hotels Location Map">
                             </iframe>
+                            <!-- Custom pin overlay: sits at the map's center point (where the
+                                 q= search result is centered) so the hotel is unmistakable
+                                 even if the underlying Google marker is hard to spot. -->
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full flex flex-col items-center pointer-events-none z-10">
+                                <span class="bg-stone-900 text-white text-[11px] font-semibold tracking-wide px-3 py-1.5 rounded-full shadow-lg mb-1 whitespace-nowrap">
+                                    <i class="fa-solid fa-location-dot text-accent mr-1"></i>RoyalHood Apart Hotels
+                                </span>
+                                <i class="fa-solid fa-location-dot text-accent text-4xl drop-shadow-lg animate-bounce"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1391,7 +1400,7 @@
                     <div class="space-y-6">
                         <h2 class="font-serif text-3xl text-stone-900">The Philosophy of Quiet Luxury</h2>
                         <p class="text-stone-600 font-light leading-relaxed text-base mb-5">
-    				RoyalHood Aparts Hotel bridges the gap between boutique hospitality and the privacy of exclusive residential living. Located in Tema Community 25, Royalhood Aparts Hotel is conveniently located within many amenities such as supermarkets, hospitals, shopping malls, restaurants, and more. We are only 15 minutes from Prampram beach making it the perfect destination for guests wanting to spend time by the seaside.
+    				RoyalHood Apart Hotels bridges the gap between boutique hospitality and the privacy of exclusive residential living. Located in Tema Community 25, Royalhood Apart Hotels is conveniently located within many amenities such as supermarkets, hospitals, shopping malls, restaurants, and more. We are only 15 minutes from Prampram beach making it the perfect destination for guests wanting to spend time by the seaside.
 			</p>
 			<p class="text-stone-600 font-light leading-relaxed text-base">
 				We believe a truly exceptional stay is defined by more than beautiful spaces. It is about thoughtful design, genuine comfort, attentive service, and the freedom to feel completely at home. Every detail is carefully considered to create an environment that feels refined yet welcoming, private yet connected. 
@@ -1403,7 +1412,7 @@
 				At RoyalHood, we invite you to settle in, slow down, and experience Tema from a more personal perspective. 
 			</p>
                         <p class="mt-8 pt-5 border-t border-stone-200 text-center text-stone-600 font-light italic tracking-wide">
-                                <span class="text-base">RoyalHood Aparts Hotel:</span> <span class="text-sm">Discover the Difference.</span>
+                                <span class="text-base">RoyalHood Apart Hotels:</span> <span class="text-sm">Discover the Difference.</span>
                          </p>
                     </div>
                 </div>
@@ -1485,13 +1494,13 @@
                 </div>
                 <div class="max-w-4xl mx-auto px-4 py-16 space-y-10">
                     <p class="text-stone-600 font-light leading-relaxed text-base">
-                        These Terms of Residence govern all reservations and stays at RoyalHood Aparts Hotel. By booking or staying with us, guests agree to abide by the following terms.
+                        These Terms of Residence govern all reservations and stays at RoyalHood Apart Hotels. By booking or staying with us, guests agree to abide by the following terms.
                     </p>
 
                     <div class="space-y-3">
                         <h2 class="font-serif text-2xl text-stone-900">Reservations</h2>
                         <p class="text-stone-600 font-light leading-relaxed text-base">
-                            All reservations are subject to availability and confirmation by RoyalHood Aparts Hotel. A valid form of identification and, where applicable, a deposit or full payment may be required to secure a booking.
+                            All reservations are subject to availability and confirmation by RoyalHood Apart Hotels. A valid form of identification and, where applicable, a deposit or full payment may be required to secure a booking.
                         </p>
                     </div>
 
@@ -1540,14 +1549,14 @@
                     <div class="space-y-3">
                         <h2 class="font-serif text-2xl text-stone-900">Liability</h2>
                         <p class="text-stone-600 font-light leading-relaxed text-base">
-                            RoyalHood Aparts Hotel shall not be held liable for loss, theft, or damage to personal belongings during a guest's stay, except where required by applicable law. Guests are encouraged to safeguard their valuables and use any provided in-room safes.
+                            RoyalHood Apart Hotels shall not be held liable for loss, theft, or damage to personal belongings during a guest's stay, except where required by applicable law. Guests are encouraged to safeguard their valuables and use any provided in-room safes.
                         </p>
                     </div>
 
                     <div class="space-y-3">
                         <h2 class="font-serif text-2xl text-stone-900">General</h2>
                         <p class="text-stone-600 font-light leading-relaxed text-base">
-                            RoyalHood Aparts Hotel reserves the right to amend these Terms of Residence at any time. Continued use of our services constitutes acceptance of the current terms. For questions regarding these terms, please contact us at royalhoodhotels@gmail.com or +233 (0) 24 464 5937 | +44 (0) 740 365 9664.
+                            RoyalHood Apart Hotels reserves the right to amend these Terms of Residence at any time. Continued use of our services constitutes acceptance of the current terms. For questions regarding these terms, please contact us at royalhoodhotels@gmail.com or +233 (0) 24 464 5937 | +44 (0) 740 365 9664.
                         </p>
                     </div>
                 </div>
@@ -1633,7 +1642,7 @@
                         body: JSON.stringify({
                             access_key: WEB3FORMS_ACCESS_KEY,
                             subject: `New contact form message from ${payload.name}`,
-                            from_name: 'RoyalHood Aparts Hotel Website',
+                            from_name: 'RoyalHood Apart Hotels Website',
                             name: payload.name,
                             email: payload.email,
                             message: payload.message
