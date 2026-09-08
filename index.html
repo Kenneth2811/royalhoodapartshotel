@@ -852,17 +852,18 @@
                     <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 shadow-2xl grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                         <div>
                             <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Check-in Date</label>
-                            <input type="date" id="quick-checkin" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900" value="2026-09-01">
+                            <input type="date" id="quick-checkin" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900" onchange="document.getElementById('quick-checkout').min = this.value">
                         </div>
                         <div>
                             <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Check-out Date</label>
-                            <input type="date" id="quick-checkout" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900" value="2026-09-06">
+                            <input type="date" id="quick-checkout" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
                         </div>
                         <div>
                             <label class="block text-[11px] uppercase tracking-wider font-bold text-stone-500 mb-1">Guests</label>
                             <select id="quick-guests" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-stone-900">
+                                <option value="" selected disabled>Select Guests</option>
                                 <option value="1">1 Guest</option>
-                                <option value="2" selected>2 Guests</option>
+                                <option value="2">2 Guests</option>
                                 <option value="3">3 Guests</option>
                                 <option value="4">4+ Guests</option>
                             </select>
@@ -1031,6 +1032,7 @@
             const rooms = DB.getRooms();
             const room = rooms.find(r => r.id === roomId) || rooms[0];
             const settings = DB.getSettings() || DEFAULT_SETTINGS;
+            const todayISO = new Date().toISOString().split('T')[0];
 
             if (!room) {
                 return `
@@ -1133,17 +1135,18 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-in</label>
-                                            <input type="date" id="book-checkin" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" value="2026-09-01" onchange="calculateBookingTotal(${room.pricePerNight})">
+                                            <input type="date" id="book-checkin" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" min="${todayISO}" value="${todayISO}" onchange="document.getElementById('book-checkout').min = this.value; calculateBookingTotal(${room.pricePerNight})">
                                         </div>
                                         <div>
                                             <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Check-out</label>
-                                            <input type="date" id="book-checkout" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" value="2026-09-06" onchange="calculateBookingTotal(${room.pricePerNight})">
+                                            <input type="date" id="book-checkout" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900" min="${todayISO}" onchange="calculateBookingTotal(${room.pricePerNight})">
                                         </div>
                                     </div>
 
                                     <div>
                                         <label class="block text-[11px] uppercase tracking-wider font-semibold text-stone-600 mb-1">Guests</label>
-                                        <select id="book-guests" class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                        <select id="book-guests" required class="w-full bg-stone-100 border border-stone-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-stone-900">
+                                            <option value="" selected disabled>Select Guests</option>
                                             ${Array.from({length: room.maxGuests}, (_, i) => `<option value="${i+1}">${i+1} Guest${i > 0 ? 's' : ''}</option>`).join('')}
                                         </select>
                                     </div>
@@ -1277,7 +1280,7 @@
                 key: 'things', emoji: '\u{1F3AF}', title: 'Things to Do',
                 places: [
                     { name: 'Beaches', icon: 'fa-umbrella-beach', desc: 'Prampram Beach offers a relaxing seaside escape with golden sand and beach bars.', distance: '~15 min drive' },
-                    { name: 'Parks', icon: 'fa-tree', desc: 'Green spaces nearby for a walk or some fresh air.', distance: '15-20 min drive' },
+                    { name: 'Parks', icon: 'fa-tree', desc: 'Enjoy easy access to nearby green spaces, perfect for taking a relaxing walk, getting some fresh air, or simply unwinding in a peaceful outdoor setting during your stay.', distance: '3-5 min drive' },
                     { name: 'Tourist Attractions', icon: 'fa-camera-retro', desc: 'Historic sites and cultural landmarks within reach of the property.', distance: 'Varies' },
                     { name: 'Entertainment', icon: 'fa-champagne-glasses', desc: 'Cinemas, lounges, and nightlife spots for evening entertainment.', distance: '10-20 min drive' }
                 ]
@@ -1285,10 +1288,10 @@
             {
                 key: 'transport', emoji: '\u2708\uFE0F', title: 'Getting Around',
                 places: [
-                    { name: 'Kotoka International Airport', icon: 'fa-plane', desc: "Ghana's main international airport, easily reached by road.", distance: '~40-50 min drive' },
+                    { name: 'Accra International Airport', icon: 'fa-plane', desc: "Ghana’s main international airport, easily reached by express road, offering convenient access for both domestic and international travel.", distance: '~40-50 min drive' },
                     { name: 'Major Roads', icon: 'fa-road', desc: 'Convenient access to the Tema Motorway and Beach Road for travel across the city.', distance: 'On-site access' },
                     { name: 'Taxi / Rideshare', icon: 'fa-taxi', desc: 'Uber and Bolt operate widely in the area for easy, on-demand transport.', distance: 'Available on request' },
-                    { name: 'Approximate Travel Times', icon: 'fa-clock', desc: 'Most everyday needs are within a 5-20 minute drive, with the airport and central Accra roughly 30-50 minutes away.', distance: 'Summary' }
+                    { name: 'Car Rentals', icon: 'fa-car-side', desc: 'Explore the area with ease by choosing from a range of trusted car rental services available around the hotel. Whether you need a vehicle for a day, your entire stay, or a longer journey, nearby rental providers offer convenient options to suit your transportation needs.', distance: '~5-10 min drive' }
                 ]
             }
         ];
