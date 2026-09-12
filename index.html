@@ -1192,6 +1192,22 @@
             `;
         }
 
+        // Photos shown on the public Gallery page. Edit this list to add/remove/reorder photos.
+        const GALLERY_PHOTOS = [
+            'images/gal1.png',
+            'images/gal4.png',
+            'images/gal2.png',
+            'images/gal7.jpg',
+            'images/gal8.jpg',
+            'images/gal9.jpg',
+            'images/gal10.jpg',
+            'images/gal11.jpg',
+            'images/gal12.jpg',
+            'images/gal13.jpg',
+            'images/gal14.jpg',
+            'images/gal15.jpg'
+        ];
+
         function renderGalleryPage() {
             return `
                 <div class="bg-stone-900 text-white py-16 px-4 text-center">
@@ -1201,9 +1217,14 @@
                 </div>
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal1.png" class="w-full h-full object-cover"></div>
-                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal4.png" class="w-full h-full object-cover"></div>
-                        <div class="h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200"><img src="images/gal2.png" class="w-full h-full object-cover"></div>
+                        ${GALLERY_PHOTOS.map((src, i) => `
+                            <button onclick="openGalleryLightbox(${i})" class="group h-80 rounded-2xl overflow-hidden shadow-sm bg-stone-200 relative cursor-pointer" title="View full size">
+                                <img src="${src}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-stone-950/0 group-hover:bg-stone-950/20 transition-colors flex items-center justify-center">
+                                    <i class="fa-solid fa-expand text-white text-xl opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </div>
+                            </button>
+                        `).join('')}
                     </div>
                 </div>
             `;
@@ -1261,9 +1282,9 @@
             {
                 key: 'food', emoji: '\u{1F37D}\uFE0F', title: 'Food & Dining',
                 places: [
-                    { name: 'Restaurants', icon: 'fa-utensils', desc: 'A good selection of sit-down restaurants serving continental and international dishes, including popular options such as Noble house.', distance: '5-7 min drive', photos: [{ src: 'locations/basillisa.jpg', label: 'Basillisa' }, { src: 'locations/noble house.jpg', label: 'Noble House' }] },
+                    { name: 'Restaurants', icon: 'fa-utensils', desc: 'A good selection of sit-down restaurants serving continental and international dishes, including popular options such as Basilissa and Noble house.', distance: '5-7 min drive', photos: [{ src: 'locations/basillisa.jpg', label: 'Basillisa' }, { src: 'locations/noble house.jpg', label: 'Noble House' }] },
                     { name: 'Caf\u00e9s', icon: 'fa-mug-saucer', desc: 'Relaxed caf\u00e9s for coffee, pastries, and light bites.', distance: '5-10 min drive',image: "locations/greenleaf.jpeg" },
-                    { name: 'Fast Food', icon: 'fa-burger', desc: 'Popular fast-food chains for a quick and convenient meal, including KFC and Pizza hut.', distance: '~2-5 min drive', image: "locations/papa's pizza.jpg" },
+                    { name: 'Fast Food', icon: 'fa-burger', desc: 'Popular fast-food chains for a quick and convenient meal, including KFC and Papas Pizza.', distance: '~2-5 min drive', image: "locations/papa's pizza.jpg" },
                     { name: 'Local Ghanaian Food', icon: 'fa-bowl-food', desc: 'Greenleaf and other local eateries nearby serving popular Ghanaian dishes such as waakye, jollof and more', distance: '2-5 min walk', image: "locations/eatery.jpeg" }
                 ]
             },
@@ -1807,6 +1828,18 @@
             const photos = (window.__roomPhotoSets && window.__roomPhotoSets[roomId]) || [];
             if (photos.length === 0) return;
             lightboxPhotos = photos;
+            lightboxIndex = startIndex || 0;
+            renderLightbox();
+            const modal = document.getElementById('photo-lightbox-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Opens the shared photo lightbox for the public Gallery page's photo set.
+        function openGalleryLightbox(startIndex) {
+            if (GALLERY_PHOTOS.length === 0) return;
+            lightboxPhotos = GALLERY_PHOTOS;
             lightboxIndex = startIndex || 0;
             renderLightbox();
             const modal = document.getElementById('photo-lightbox-modal');
