@@ -832,10 +832,10 @@
                             Tema, Greater Accra
                         </span>
                         <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl text-white font-normal tracking-tight leading-tight">
-                            Refined Minimalist <br><span class="italic font-light text-accent">Luxury Living</span>
+                            Experience <br><span class="italic font-light text-accent">Luxury Living</span>
                         </h1>
                         <p class="text-stone-300 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-                           Experience refined comfort, modern elegance, and breathtaking city views in one of Ghana’s most exclusive private residences.</p>
+                           Discover the difference in every detail, where luxury, comfort, and exceptional hospitality come together.</p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                             <button onclick="router.navigateTo('apartments')" class="w-full sm:w-auto bg-accent text-stone-950 px-8 py-4 rounded-full text-xs uppercase tracking-widest font-bold hover:bg-accent-light transition-all shadow-xl">
                                 Book Your Stay
@@ -911,6 +911,9 @@
                                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur text-stone-900 text-sm px-3.5 py-1.5 rounded-full font-bold shadow">
                                             $${r.pricePerNight} <span class="text-xs font-normal text-stone-500">/ night</span>
                                         </div>
+                                        <div class="absolute bottom-4 left-4 ${r.availability === 'booked' ? 'bg-red-600' : 'bg-green-600'} text-white text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider shadow">
+                                            <i class="fa-solid ${r.availability === 'booked' ? 'fa-lock' : 'fa-circle-check'} mr-1"></i>${r.availability === 'booked' ? 'Currently Booked' : 'Available'}
+                                        </div>
                                     </div>
                                     <div class="p-6 flex flex-col flex-grow">
                                         <h3 class="font-serif text-xl font-bold text-stone-900 mb-2">${r.name}</h3>
@@ -924,9 +927,15 @@
                                             <button onclick="router.navigateTo('room-detail', '${r.id}')" class="flex-1 bg-stone-100 text-stone-900 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-stone-900 hover:text-white transition-colors">
                                                 View Details
                                             </button>
+                                            ${r.availability === 'booked' ? `
+                                            <button disabled class="flex-1 bg-stone-200 text-stone-400 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold cursor-not-allowed">
+                                                Booked
+                                            </button>
+                                            ` : `
                                             <button onclick="router.navigateTo('room-detail', '${r.id}')" class="flex-1 bg-stone-900 text-stone-50 py-3 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
                                                 Book Now
                                             </button>
+                                            `}
                                         </div>
                                     </div>
                                 </div>
@@ -999,6 +1008,9 @@
                                         <div class="absolute top-3 right-3 bg-white/90 backdrop-blur text-stone-900 text-xs px-3 py-1 rounded-full font-bold shadow">
                                             $${r.pricePerNight} <span class="text-[10px] font-normal text-stone-500">/ night</span>
                                         </div>
+                                        <div class="absolute bottom-3 left-3 ${r.availability === 'booked' ? 'bg-red-600' : 'bg-green-600'} text-white text-[10px] px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider shadow">
+                                            <i class="fa-solid ${r.availability === 'booked' ? 'fa-lock' : 'fa-circle-check'} mr-1"></i>${r.availability === 'booked' ? 'Currently Booked' : 'Available'}
+                                        </div>
                                     </div>
                                     <div class="p-5 flex flex-col flex-grow">
                                         <h3 class="font-serif text-lg font-bold text-stone-900 mb-2">${r.name}</h3>
@@ -1015,9 +1027,15 @@
                                             <button onclick="router.navigateTo('room-detail', '${r.id}')" class="w-full bg-stone-100 text-stone-900 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-semibold hover:bg-stone-900 hover:text-white transition-colors">
                                                 View Details
                                             </button>
+                                            ${r.availability === 'booked' ? `
+                                            <button disabled class="w-full bg-stone-200 text-stone-400 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-semibold cursor-not-allowed">
+                                                Currently Booked
+                                            </button>
+                                            ` : `
                                             <button onclick="router.navigateTo('room-detail', '${r.id}')" class="w-full bg-stone-900 text-stone-50 py-2.5 rounded-xl text-[11px] uppercase tracking-widest font-semibold hover:bg-accent hover:text-stone-900 transition-colors">
                                                 Book Now
                                             </button>
+                                            `}
                                         </div>
                                     </div>
                                 </div>
@@ -1057,7 +1075,12 @@
                     </div>
 
                     <div class="mb-8">
-                        <h1 class="font-serif text-3xl sm:text-4xl text-stone-900 mb-2">${room.name}</h1>
+                        <div class="flex flex-wrap items-center gap-3 mb-2">
+                            <h1 class="font-serif text-3xl sm:text-4xl text-stone-900">${room.name}</h1>
+                            <span class="inline-flex items-center gap-1.5 ${room.availability === 'booked' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'} text-[11px] px-3 py-1 rounded-full font-semibold uppercase tracking-wider">
+                                <i class="fa-solid ${room.availability === 'booked' ? 'fa-lock' : 'fa-circle-check'}"></i>${room.availability === 'booked' ? 'Currently Booked' : 'Available'}
+                            </span>
+                        </div>
                         <div class="flex flex-wrap items-center gap-6 text-sm text-stone-600">
                             <span><i class="fa-solid fa-location-dot text-accent mr-1"></i> Tema, Greater Accra</span>
                             <span><i class="fa-solid fa-user-group text-accent mr-1"></i> Up to ${room.maxGuests} Guests</span>
@@ -1123,8 +1146,15 @@
                                         <span class="font-serif text-3xl font-bold text-stone-900">$${room.pricePerNight}</span>
                                         <span class="text-stone-500 text-sm"> / night</span>
                                     </div>
-                                    <div class="text-xs bg-accent/15 text-stone-900 px-3 py-1 rounded-full font-semibold">Available</div>
+                                    <div class="text-xs ${room.availability === 'booked' ? 'bg-red-100 text-red-800' : 'bg-accent/15 text-stone-900'} px-3 py-1 rounded-full font-semibold">${room.availability === 'booked' ? 'Booked' : 'Available'}</div>
                                 </div>
+
+                                ${room.availability === 'booked' ? `
+                                <div class="bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-4 flex items-start gap-2">
+                                    <i class="fa-solid fa-circle-info mt-0.5"></i>
+                                    <span>This apartment is currently marked as booked by our team and isn't taking new reservations right now. Please check back soon or contact us for the next available date.</span>
+                                </div>
+                                ` : ''}
 
                                 <div class="flex items-center justify-between text-[11px] text-stone-500 -mt-2 pb-2">
                                     <span><i class="fa-solid fa-right-to-bracket mr-1 text-accent"></i>Check-in: <strong class="text-stone-700">${room.checkInTime || settings.checkInTime}</strong></span>
@@ -1181,8 +1211,8 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="w-full bg-stone-900 text-stone-50 py-4 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-accent hover:text-stone-900 transition-colors shadow-lg">
-                                        Request Reservation
+                                    <button type="submit" ${room.availability === 'booked' ? 'disabled' : ''} class="w-full ${room.availability === 'booked' ? 'bg-stone-300 text-stone-500 cursor-not-allowed' : 'bg-stone-900 text-stone-50 hover:bg-accent hover:text-stone-900'} py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-colors shadow-lg">
+                                        ${room.availability === 'booked' ? 'Currently Unavailable' : 'Request Reservation'}
                                     </button>
                                 </form>
                             </div>
@@ -2052,9 +2082,14 @@
                                             <p class="text-xs text-stone-500 line-clamp-2">${r.description}</p>
                                         </div>
                                         <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs gap-2 flex-wrap">
-                                            <button onclick="toggleRoomStatus('${r.id}')" class="px-3 py-1 rounded font-semibold ${r.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                                ${r.active ? 'Active' : 'Inactive'}
-                                            </button>
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <button onclick="toggleRoomStatus('${r.id}')" class="px-3 py-1 rounded font-semibold ${r.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                                    ${r.active ? 'Active' : 'Inactive'}
+                                                </button>
+                                                <button onclick="toggleRoomAvailability('${r.id}')" title="Toggle whether clients see this room as available or booked" class="px-3 py-1 rounded font-semibold ${r.availability === 'booked' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}">
+                                                    <i class="fa-solid fa-arrow-right-arrow-left mr-1 text-[10px]"></i>${r.availability === 'booked' ? 'Booked' : 'Available'}
+                                                </button>
+                                            </div>
                                             <div class="flex items-center gap-1">
                                                 <button onclick="openEditRoomModal('${r.id}')" class="text-stone-700 hover:text-stone-900 font-semibold px-2 py-1 rounded hover:bg-stone-200 transition-colors" title="Edit ${r.name.replace(/'/g, "\\'")}" aria-label="Edit ${r.name.replace(/'/g, "\\'")}">
                                                     <i class="fa-solid fa-pen mr-1"></i> Edit
@@ -2088,6 +2123,18 @@
             const r = rooms.find(item => item.id === roomId);
             if (r) {
                 r.active = !r.active;
+                await DB.saveRooms(rooms);
+                router.navigateTo('admin');
+            }
+        }
+
+        // Lets the admin flip a room between "Available" and "Booked" so that
+        // clients browsing the site can see its current booking status at a glance.
+        async function toggleRoomAvailability(roomId) {
+            const rooms = DB.getRooms();
+            const r = rooms.find(item => item.id === roomId);
+            if (r) {
+                r.availability = r.availability === 'booked' ? 'available' : 'booked';
                 await DB.saveRooms(rooms);
                 router.navigateTo('admin');
             }
@@ -2215,6 +2262,7 @@
                 mainImage,
                 galleryImages,
                 active,
+                availability: 'available',
                 checkInTime,
                 checkOutTime
             };
