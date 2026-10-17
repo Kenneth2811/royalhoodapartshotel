@@ -683,17 +683,61 @@
                 }
                 return { ok: true };
             },
+            // Deletes a room and returns { ok, error }. The local cache is only changed
+            // AFTER Supabase confirms a row was really deleted. Previously the room was
+            // removed locally first and any database failure was swallowed, so a blocked
+            // delete (RLS policy, foreign key, expired login) looked successful and the
+            // room reappeared on the next sync/refresh.
             async deleteRoomFromDb(roomId) {
-                let rooms = this.getRooms().filter(r => r.id !== roomId);
-                this._cacheRooms(rooms);
-                if (supabaseClient) {
-                    try {
-                        const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).delete().eq('id', roomId);
-                        if (error) console.error("Supabase Error [deleteRoom]:", error.message, error);
-                    } catch (err) {
-                        console.error("Unexpected error in deleteRoomFromDb:", err);
-                    }
+                if (!supabaseClient) {
+                    this._cacheRooms(this.getRooms().filter(r => String(r.id) !== String(roomId)));
+                    return { ok: true };
                 }
+                try {
+                    const { data, error } = await supabaseClient
+                        .from(SUPABASE_CONFIG.tables.rooms)
+                        .delete()
+                        .eq('id', roomId)
+                        .select('id');
+
+                    if (error) {
+                        console.error("Supabase Error [deleteRoom]:", error.message, error);
+                        let msg = error.message;
+                        if (error.code === '23503') {
+                            msg = 'This apartment still has bookings linked to it, so the database will not delete it. Delete or reassign those bookings first (or set the apartment to Inactive to hide it).';
+                        }
+                        return { ok: false, error: msg };
+                    }
+
+                    // With Row Level Security, a missing DELETE policy does NOT raise an
+                    // error: Supabase just deletes 0 rows. Detect that case explicitly.
+                    if (!data || data.length === 0) {
+                        const { data: stillThere } = await supabaseClient
+                            .from(SUPABASE_CONFIG.tables.rooms).select('id').eq('id', roomId);
+                        if (stillThere && stillThere.length > 0) {
+                            return {
+                                ok: false,
+                                error: 'The database refused to delete this apartment (0 rows removed). This is almost always a missing DELETE policy for logged-in admins on the rooms table in Supabase, or your admin session has expired.'
+                            };
+                        }
+                        // Row was already gone on the server: treat as success.
+                    }
+
+                    this._cacheRooms(this.getRooms().filter(r => String(r.id) !== String(roomId)));
+                    return { ok: true };
+                } catch (err) {
+                    console.error("Unexpected error in deleteRoomFromDb:", err);
+                    return { ok: false, error: err.message || String(err) };
+                }
+            },
+
+            // Re-pull rooms from Supabase so the local cache matches the real database.
+            async refreshRoomsFromServer() {
+                if (!supabaseClient) return;
+                try {
+                    const { data, error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).select('*');
+                    if (!error) this._cacheRooms(data || []);
+                } catch (e) { console.warn('Room refresh failed', e); }
             },
 
             getBookings() {
@@ -2120,7 +2164,7 @@
                                                 <button onclick="openEditRoomModal('${r.id}')" class="text-stone-700 hover:text-stone-900 font-semibold px-2 py-1 rounded hover:bg-stone-200 transition-colors" title="Edit ${r.name.replace(/'/g, "\\'")}" aria-label="Edit ${r.name.replace(/'/g, "\\'")}">
                                                     <i class="fa-solid fa-pen mr-1"></i> Edit
                                                 </button>
-                                                <button onclick="confirmDeleteRoom('${r.id}', '${r.name.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800 font-semibold px-2 py-1 rounded hover:bg-red-50 transition-colors">
+                                                <button onclick="confirmDeleteRoom(decodeURIComponent('${encodeURIComponent(String(r.id))}'))" class="text-red-600 hover:text-red-800 font-semibold px-2 py-1 rounded hover:bg-red-50 transition-colors">
                                                     <i class="fa-solid fa-trash-can mr-1"></i> Delete
                                                 </button>
                                             </div>
@@ -2166,11 +2210,23 @@
             }
         }
 
-        async function confirmDeleteRoom(roomId, roomName) {
+        async function confirmDeleteRoom(roomId) {
+            const room = DB.getRooms().find(r => String(r.id) === String(roomId));
+            const roomName = room ? room.name : 'this apartment';
             const confirmed = confirm(`Are you sure you want to permanently delete "${roomName}"? This action cannot be undone.`);
             if (!confirmed) return;
 
-            await DB.deleteRoomFromDb(roomId);
+            if (supabaseClient && !currentSession) {
+                alert('Your admin session has expired. Please log in again, then retry the delete.');
+                router.navigateTo('admin');
+                return;
+            }
+
+            const result = await DB.deleteRoomFromDb(roomId);
+            if (!result.ok) {
+                alert('Could not delete "' + roomName + '".\n\n' + result.error);
+                await DB.refreshRoomsFromServer();
+            }
             router.navigateTo('admin');
         }
 
