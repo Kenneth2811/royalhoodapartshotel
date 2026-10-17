@@ -582,7 +582,7 @@
                         localStorage.setItem('royalhood_settings', JSON.stringify(
                             (settingsRes.data && settingsRes.data.length > 0) ? settingsRes.data[0] : DEFAULT_SETTINGS
                         ));
-                        localStorage.setItem('royalhood_rooms', JSON.stringify(roomsRes.data || DEFAULT_ROOMS));
+                        this._cacheRooms(roomsRes.data || DEFAULT_ROOMS);
                         localStorage.setItem('royalhood_bookings', JSON.stringify(bookingsRes.data || DEFAULT_BOOKINGS));
 
                         this._subscribeToRealtimeUpdates();
@@ -618,7 +618,7 @@
                         async () => {
                             const { data, error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).select('*');
                             if (!error) {
-                                localStorage.setItem('royalhood_rooms', JSON.stringify(data || DEFAULT_ROOMS));
+                                DB._cacheRooms(data || DEFAULT_ROOMS);
                                 router.render();
                             }
                         }
@@ -642,24 +642,50 @@
             },
 
             getRooms() {
-                return JSON.parse(localStorage.getItem('royalhood_rooms')) || [];
-            },
-            async saveRooms(rooms) {
-                localStorage.setItem('royalhood_rooms', JSON.stringify(rooms));
-                if (supabaseClient) {
-                    try {
-                        for (let room of rooms) {
-                            const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).upsert(room);
-                            if (error) console.error("Supabase Error [saveRooms]:", error.message, error);
-                        }
-                    } catch (err) {
-                        console.error("Unexpected error in saveRooms:", err);
-                    }
+                try {
+                    return JSON.parse(localStorage.getItem('royalhood_rooms')) || [];
+                } catch (e) {
+                    return [];
                 }
+            },
+
+            // Writing to localStorage can throw (quota exceeded). Never let that stop
+            // the real save to the database, and never fail silently.
+            _cacheRooms(rooms) {
+                try {
+                    localStorage.setItem('royalhood_rooms', JSON.stringify(rooms));
+                    return true;
+                } catch (err) {
+                    console.warn('Local cache full; relying on the database copy.', err);
+                    try { localStorage.removeItem('royalhood_rooms'); } catch (e) {}
+                    return false;
+                }
+            },
+
+            // Saves rooms and returns { ok, error }. Pass `onlyRooms` to upsert just the
+            // rooms that changed instead of re-sending every apartment (and all of
+            // their photos) each time.
+            async saveRooms(rooms, onlyRooms = null) {
+                this._cacheRooms(rooms);
+                if (!supabaseClient) return { ok: true };
+                try {
+                    const toSave = onlyRooms || rooms;
+                    for (let room of toSave) {
+                        const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).upsert(room);
+                        if (error) {
+                            console.error("Supabase Error [saveRooms]:", error.message, error);
+                            return { ok: false, error: error.message };
+                        }
+                    }
+                } catch (err) {
+                    console.error("Unexpected error in saveRooms:", err);
+                    return { ok: false, error: err.message || String(err) };
+                }
+                return { ok: true };
             },
             async deleteRoomFromDb(roomId) {
                 let rooms = this.getRooms().filter(r => r.id !== roomId);
-                localStorage.setItem('royalhood_rooms', JSON.stringify(rooms));
+                this._cacheRooms(rooms);
                 if (supabaseClient) {
                     try {
                         const { error } = await supabaseClient.from(SUPABASE_CONFIG.tables.rooms).delete().eq('id', roomId);
@@ -2123,7 +2149,7 @@
             const r = rooms.find(item => item.id === roomId);
             if (r) {
                 r.active = !r.active;
-                await DB.saveRooms(rooms);
+                await DB.saveRooms(rooms, [r]);
                 router.navigateTo('admin');
             }
         }
@@ -2135,7 +2161,7 @@
             const r = rooms.find(item => item.id === roomId);
             if (r) {
                 r.availability = r.availability === 'booked' ? 'available' : 'booked';
-                await DB.saveRooms(rooms);
+                await DB.saveRooms(rooms, [r]);
                 router.navigateTo('admin');
             }
         }
@@ -2159,16 +2185,49 @@
             document.getElementById('add-room-modal').classList.add('hidden');
         }
 
-        function handleImageFileSelect(event, hiddenInputId, previewImgId) {
+        // Photos are resized + compressed before being stored. Raw phone photos are
+        // several MB each as base64, which quickly exhausts the browser's ~5MB
+        // localStorage quota (this is what used to stop new apartments from saving
+        // after roughly four) and also makes the database requests huge.
+        function compressImageFile(file, maxDim = 1400, quality = 0.75) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(reader.error);
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onerror = () => resolve(e.target.result); // fall back to original
+                    img.onload = () => {
+                        let { width, height } = img;
+                        const scale = Math.min(1, maxDim / Math.max(width, height));
+                        width = Math.round(width * scale);
+                        height = Math.round(height * scale);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleImageFileSelect(event, hiddenInputId, previewImgId) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById(hiddenInputId).value = e.target.result;
+            try {
+                const dataUrl = await compressImageFile(file);
+                document.getElementById(hiddenInputId).value = dataUrl;
                 const preview = document.getElementById(previewImgId);
-                if (preview) preview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+                if (preview) preview.src = dataUrl;
+            } catch (err) {
+                console.error('Could not read image file:', err);
+                alert('Sorry, that image could not be read. Please try another file.');
+            }
         }
 
         // Lets an admin attach as many extra photos as they want when adding a room,
@@ -2269,8 +2328,19 @@
 
             const rooms = DB.getRooms();
             rooms.push(newRoom);
-            await DB.saveRooms(rooms);
+            const result = await DB.saveRooms(rooms, [newRoom]);
+            if (!result.ok) {
+                errorBox.innerText = "The apartment could not be saved to the database: " + result.error;
+                errorBox.classList.remove('hidden');
+                return;
+            }
 
+            // Reset the form so the next apartment starts clean.
+            document.getElementById('add-room-form').reset();
+            [['room-main-image','room-main-image-preview'],['room-gallery-image-2','room-photo-2-preview'],['room-gallery-image-3','room-photo-3-preview']].forEach(([h,pv]) => {
+                const hid = document.getElementById(h), img = document.getElementById(pv);
+                if (hid && img) img.src = hid.value;
+            });
             closeAddRoomModal();
             router.navigateTo('admin');
         }
@@ -2393,7 +2463,12 @@
                 checkOutTime
             };
 
-            await DB.saveRooms(rooms);
+            const editResult = await DB.saveRooms(rooms, [rooms[roomIndex]]);
+            if (!editResult.ok) {
+                errorBox.innerText = "Changes could not be saved to the database: " + editResult.error;
+                errorBox.classList.remove('hidden');
+                return;
+            }
 
             closeEditRoomModal();
             router.navigateTo('admin');
